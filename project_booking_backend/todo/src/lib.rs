@@ -24,11 +24,11 @@ impl ToDo {
     pub fn add ( &mut self, p_name: String, p_labels: Vec<String> ) -> Result<String,String> {
         match self.list.iter().position(|t| t.name() == p_name ) {
             Some(_) => {
-                Err(format!("A task with the name {} already exists", p_name))
+                Err(format!("A task with the name \"{}\" already exists", p_name))
             },
             None => {
                 self.list.push(Task::new (self.task_id.new(), p_name.clone(), p_labels ) );
-                Ok(format!("Task with name {} was added",p_name))
+                Ok(format!("Task with name \"{}\" was added", p_name))
             },
         }
     }
@@ -70,39 +70,16 @@ impl ToDo {
                 match file.write_all(serilazed_data.as_bytes() ) {
                     Ok(_) => {},
                     Err(error) => {
-                        return Err (format!(" \"{}\" occured while saving data to {}",error.to_string(),backup_file.clone()));
+                        return Err(format!(" \"{}\" occured while saving data to \"{}\"", error.to_string(), backup_file.clone()));
                     }
                 };
             },
             Err(error) => {
-                return Err (format!(" \"{}\" while creating file {}",error.to_string(),backup_file.clone()));
+                return Err(format!(" \"{}\" while creating file \"{}\"", error.to_string(), backup_file.clone()));
             }
         };
 
-        Ok(format!("todo was saved"))
-    }
-
-    pub fn load (load_file: Option<String>) -> Result<ToDo,String> {
-
-        let backup_file = load_file.unwrap_or(backup_file());
-
-        let file = match OpenOptions::new().read(true).open(backup_file.clone()) {
-            Ok(file) => {
-                file
-            },
-            Err(error) => {
-                return Err (format!(" \"{}\" while reading file {}",error.to_string(),backup_file.clone()));
-            },
-        };
-
-        match serde_json::from_reader(file){
-            Ok(todo) => {
-                Ok(todo)
-            },
-            Err(error) => {
-                Err (format!(" \"{}\" while deserializing file {}",error.to_string(),backup_file.clone()))
-            },
-        }
+        Ok(format!("Todo was saved."))
     }
 
     /*TODO not used
@@ -130,6 +107,27 @@ fn backup_file () -> String {
     format!("ToDoData")
 }
 
+pub fn load(load_file: Option<String>) -> Result<ToDo, String> {
+    let backup_file = load_file.unwrap_or(backup_file());
+
+    let file = match OpenOptions::new().read(true).open(backup_file.clone()) {
+        Ok(file) => {
+            file
+        },
+        Err(error) => {
+            return Err(format!(" \"{}\" while reading file \"{}\"", error.to_string(), backup_file.clone()));
+        },
+    };
+
+    match serde_json::from_reader(file) {
+        Ok(todo) => {
+            Ok(todo)
+        },
+        Err(error) => {
+            Err(format!(" \"{}\" while deserializing file \"{}\"", error.to_string(), backup_file.clone()))
+        },
+    }
+}
 
 /*TODO not used
 trait FindTaskByName {
