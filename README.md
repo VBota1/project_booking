@@ -15,6 +15,7 @@ A Task is defeind by:
   Event Logging
   Loading/Saving ToDo from/to a file
   Adding a new Task
+  CLI interface
 ```
 
 **To be Done High Prio:**
@@ -28,7 +29,6 @@ A Task is defeind by:
   
 **To be Done Medium Prio:**
 ```
-  separate CLI from backend
   implment QT Gui
 ``` 
   
