@@ -1,8 +1,8 @@
 extern crate todo;
-
 use todo::*;
 extern crate logger;
 use logger::*;
+use std::env::Args;
 
 //TODO MEDIUM PRIO GUI (QT)
 //TODO MEDIUM PRIO import tasks from Jira
@@ -10,7 +10,7 @@ use logger::*;
 //TODO LOW PRIO detect AFK and stop recoding
 //TODO LOW PRIO detect return on Keyboard and ask what task I am working on
 
-pub fn handle_command(mut args: std::env::Args) -> Result<String, String> {
+pub fn handle_command(mut args: Args) -> Result<String, String> {
 
     match args.nth(1) {
         Some(command) => {
@@ -20,8 +20,8 @@ pub fn handle_command(mut args: std::env::Args) -> Result<String, String> {
                     create_new_task_from_arguments(args)
                 },
                 "clockIn" => {
-                    //TODO HIGH PRIO start to keep track of time (on task) (external thread)
-                    Err(format!("clockIn command not implemented"))
+                    trace(format!("Clock in request detected"));
+                    clock_in(args)
                 },
                 "clockOut" => {
                     //TODO HIGH PRIO stop to keep track of time (on task)
@@ -38,21 +38,45 @@ pub fn handle_command(mut args: std::env::Args) -> Result<String, String> {
                     Err(format!("help command not implemented"))
                 },
                 _ => {
-                    let result = format!("Unkown command \"{}\". {}", command, recommend_help());
-                    error(result.clone());
-                    Err(result)
+                    Err(warn(format!("Unkown command \"{}\". {}", command, recommend_help())))
                 },
             }
         },
         None => {
-            let result = format!("No command received. {}", recommend_help());
-            error(result.clone());
-            Err(result)
+            Err(warn(format!("No command received. {}", recommend_help())))
         },
     }
 }
 
-fn create_new_task_from_arguments(mut args: std::env::Args) -> Result<String, String> {
+fn clock_in(mut args: Args) -> Result<String, String> {
+    let mut to_do: ToDo = get_to_do(None);
+
+    if 0 == to_do.count() {
+        let message = format!("No tasks are recorded");
+        warn(message.clone());
+        return Err(message)
+    }
+
+    match args.nth(0) {
+        Some(task) => {
+            match to_do.clock_in(task) {
+                Ok(message) => {
+                    trace(message.clone());
+                    store(to_do);
+                    Ok(message)
+                },
+                Err(message) => {
+                    Err(error(message))
+                }
+            }
+        },
+        None => {
+            Err(warn(format!("Please supply a valid task name for the clock in operation. {}", recommend_help())))
+        },
+    }
+}
+
+fn create_new_task_from_arguments(mut args: Args) -> Result<String, String> {
     let mut to_do = get_to_do(None);
 
     match args.nth(0) {
@@ -65,15 +89,12 @@ fn create_new_task_from_arguments(mut args: std::env::Args) -> Result<String, St
                     Ok(message)
                 },
                 Err(message) => {
-                    error(message.clone());
-                    Err(message)
+                    Err(error(message))
                 },
             }
         },
         None => {
-            let result = format!("No task name received. \"{}\"", recommend_help());
-            error(result.clone());
-            Err(result)
+            Err(warn(format!("No task name received. \"{}\"", recommend_help())))
         },
     }
 }

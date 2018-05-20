@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 extern crate search;
 //TODO not used use search::FindString;
 
@@ -13,17 +13,28 @@ pub struct Task {
     _name: String,
     _time_spent: Duration,
     _labels: Vec<String>,
+    _clock_in_timestamp: Option<SystemTime>,
 }
 
 impl Task {
     pub fn new(uid: i32, p_name: String, p_labels: Vec<String>) -> Task {
-        Task { _id: uid, _name: p_name, _labels: p_labels, _time_spent: Duration::new(0, 0) }
+        Task { _id: uid, _name: p_name, _labels: p_labels, _time_spent: Duration::new(0, 0), _clock_in_timestamp: None }
     }
 
     pub fn as_vec_string (&self) -> Vec<String> {
         let mut output: Vec<String> = Vec::new();
         output.push(format!("{}",self._id));
         output.push(format!("{}",self._name));
+
+        match self._clock_in_timestamp {
+            Some(timestamp) => {
+                output.push(format!("{:?}", timestamp));
+            },
+            None => {
+                output.push(format!("None"));
+            }
+        };
+
         output.push( format!("{}",self._time_spent.as_secs()));
         let labels = self._labels.clone();
         for l in labels {
@@ -34,6 +45,10 @@ impl Task {
 
     pub fn name_and_duration_as_vec_string (&self) -> Vec<String> {
         self.as_vec_string()[1..3].to_vec()
+    }
+
+    pub fn clock_in(&mut self) {
+        self._clock_in_timestamp = Some(SystemTime::now());
     }
 
     /*TODO not used

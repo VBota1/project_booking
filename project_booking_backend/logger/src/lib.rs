@@ -16,22 +16,27 @@ pub fn initiate_logging(log_name: Option<String>) -> Result<String,String>
     }
 }
 
-pub fn error(error: String) {
-    error!("{}", error);
+pub fn error(message: String) -> String {
+    error!("{}", message.clone());
+    message
 }
 
-pub fn warn(message: String) {
+pub fn warn(message: String) -> String {
     warn!("{}", message);
+    message
 }
 
-pub fn info(message: String) {
+pub fn info(message: String) -> String {
     info!("{}", message);
+    message
 }
 
-pub fn debug(message: String) {
+pub fn debug(message: String) -> String {
     debug!("{}", message);
+    message
 }
 
-pub fn trace(message: String) {
+pub fn trace(message: String) -> String {
     trace!("{}", message);
+    message
 }

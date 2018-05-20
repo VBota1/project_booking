@@ -82,6 +82,21 @@ impl ToDo {
         Ok(format!("Todo was saved."))
     }
 
+    pub fn clock_in(&mut self, task_name: String) -> Result<String, String> {
+        match self.list.index_of_task_by_name(task_name.clone()) {
+            Ok(index) => {
+                self.list.get_mut(index).unwrap().clock_in();
+                Ok(format!("Clocked in taks \"{}\"", task_name))
+            },
+            Err(message) => {
+                Err(message)
+            },
+        }
+    }
+
+    pub fn count(&self) -> usize {
+        self.list.len()
+    }
     /*TODO not used
     pub fn remove_by_name ( &mut self, p_name: String ) {
         match self.list.index_of_task_by_name(p_name) {
@@ -129,7 +144,6 @@ pub fn load(load_file: Option<String>) -> Result<ToDo, String> {
     }
 }
 
-/*TODO not used
 trait FindTaskByName {
     fn index_of_task_by_name(&self, String) -> Result<usize, String>;
 }
@@ -138,11 +152,12 @@ impl FindTaskByName for Vec<Task> {
     fn index_of_task_by_name(&self, to_find: String) -> Result<usize, String> {
         match self.iter().position(|o| o.name() == to_find ) {
             Some(index) => Ok(index),
-            None => Err(format!("Task {} was not found in vector",to_find)),
+            None => Err(format!("Task {} was not found.", to_find)),
         }
     }
 }
 
+/*TODO not used
 trait FindTask {
     fn index_of(&self, Task) -> Result<usize, String>;
 }
