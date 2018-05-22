@@ -1,0 +1,6 @@
+[package]
+name = "formaters"
+version = "0.1.0"
+authors = ["Viorel Bota <botaviorel@gmail.com>"]
+
+[dependencies]

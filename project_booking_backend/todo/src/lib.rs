@@ -5,6 +5,8 @@ use task::Task;
 use std::fs::OpenOptions;
 use std::io::Write;
 
+extern crate formaters;
+
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -87,6 +89,17 @@ impl ToDo {
             Ok(index) => {
                 self.list.get_mut(index).unwrap().clock_in();
                 Ok(format!("Clocked in taks \"{}\"", task_name))
+            },
+            Err(message) => {
+                Err(message)
+            },
+        }
+    }
+
+    pub fn clock_out(&mut self, task_name: String) -> Result<String, String> {
+        match self.list.index_of_task_by_name(task_name.clone()) {
+            Ok(index) => {
+                self.list.get_mut(index).unwrap().clock_out()
             },
             Err(message) => {
                 Err(message)

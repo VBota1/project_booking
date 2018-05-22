@@ -24,18 +24,19 @@ pub fn handle_command(mut args: Args) -> Result<String, String> {
                     clock_in(args)
                 },
                 "clockOut" => {
-                    //TODO HIGH PRIO stop to keep track of time (on task)
-                    //TODO HIGH PRIO add recorded duration to task
-                    Err(format!("clockOut command not implemented"))
+                    trace(format!("Clock out request detected"));
+                    clock_out(args)
                 },
                 "report" => {
+                    trace(format!("Clock out request detected"));
                     //TODO HIGH PRIO report time spent on one or all tasks
                     //TODO HIGH PRIO report time spent on one or all labels
-                    Err(format!("report command not implemented"))
+                    Err(warn(format!("report command not implemented")))
                 },
                 "help" => {
+                    trace(format!("Help request detected"));
                     //TODO HIGH PRIO return help information
-                    Err(format!("help command not implemented"))
+                    Err(warn(format!("help command not implemented")))
                 },
                 _ => {
                     Err(warn(format!("Unkown command \"{}\". {}", command, recommend_help())))
@@ -44,6 +45,35 @@ pub fn handle_command(mut args: Args) -> Result<String, String> {
         },
         None => {
             Err(warn(format!("No command received. {}", recommend_help())))
+        },
+    }
+}
+
+//TODO LOW PRIO optimize pass function as a parameter
+fn clock_out(mut args: Args) -> Result<String, String> {
+    let mut to_do: ToDo = get_to_do(None);
+
+    if 0 == to_do.count() {
+        let message = format!("No tasks are recorded");
+        warn(message.clone());
+        return Err(message)
+    }
+
+    match args.nth(0) {
+        Some(task) => {
+            match to_do.clock_out(task) {
+                Ok(message) => {
+                    trace(message.clone());
+                    store(to_do);
+                    Ok(message)
+                },
+                Err(message) => {
+                    Err(error(message))
+                }
+            }
+        },
+        None => {
+            Err(warn(format!("Please supply a valid task name for the clock out operation. {}", recommend_help())))
         },
     }
 }

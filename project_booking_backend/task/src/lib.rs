@@ -1,5 +1,8 @@
 use std::time::{Duration, SystemTime};
 extern crate search;
+extern crate formaters;
+
+use formaters::AsHHMMSS;
 //TODO not used use search::FindString;
 
 #[macro_use]
@@ -23,8 +26,12 @@ impl Task {
 
     pub fn as_vec_string (&self) -> Vec<String> {
         let mut output: Vec<String> = Vec::new();
+
         output.push(format!("{}",self._id));
+
         output.push(format!("{}",self._name));
+
+        output.push(format!("{}", self._time_spent.to_hhmmss()));
 
         match self._clock_in_timestamp {
             Some(timestamp) => {
@@ -35,11 +42,11 @@ impl Task {
             }
         };
 
-        output.push( format!("{}",self._time_spent.as_secs()));
         let labels = self._labels.clone();
         for l in labels {
             output.push(format!("{}",l));
         }
+
         output
     }
 
@@ -49,6 +56,26 @@ impl Task {
 
     pub fn clock_in(&mut self) {
         self._clock_in_timestamp = Some(SystemTime::now());
+    }
+
+    pub fn clock_out(&mut self) -> Result<String, String> {
+        match self._clock_in_timestamp {
+            Some(time) => {
+                match time.elapsed() {
+                    Ok(duration) => {
+                        self._time_spent += duration;
+                        self._clock_in_timestamp = None;
+                        Ok(format!("Successfully clocked out of \"{}\"", self.name()))
+                    },
+                    Err(message) => {
+                        Err(format!("Error \"{}\" occured when trying to get elapsed time since clock in event", message))
+                    },
+                }
+            },
+            None => {
+                Err(format!("Can not clock out of \"{}\" as no previous clock in was done", self.name()))
+            },
+        }
     }
 
     /*TODO not used
@@ -78,6 +105,7 @@ impl Task {
     }
 
 }
+
 /*TODO not used
 impl PartialEq for Task {
 fn eq(&self, to_find: &Task) -> bool {

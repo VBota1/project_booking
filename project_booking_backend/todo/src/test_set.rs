@@ -1,4 +1,8 @@
 use super::ToDo;
+use super::load;
+use std::time::Duration;
+use std::thread::sleep;
+use super::formaters::AsHHMMSS;
 
 #[test]
 fn id_is_unique () {
@@ -35,9 +39,8 @@ fn put_data_to_storage () {
     };
 }
 
-
 #[test]
-fn reterive_from_storage () {
+fn retrieve_from_storage() {
     let mut todo = ToDo::new();
     let task_name = format!("task0");
     todo.add(task_name.clone(), Vec::new());
@@ -52,18 +55,17 @@ fn reterive_from_storage () {
         },
     };
 
-    match ToDo::load(None) {
+    match load(None) {
         Ok(mut reterived_data) => {
             let mut actual_task_name: String = format!("");
 
             if let Some(task) = reterived_data.to_simple_report().get(0) {
                 match task.get(0) {
                     Some(task_name) => { actual_task_name = task_name.clone().to_string() },
-                    _ => { assert!(false, "Task name could not be reterived from the loaded data."); }
+                    _ => { assert!(false, "Task name could not be retrieved from the loaded data."); }
                 }
 
-            }
-            else { assert!(false,"No task could not be reterived from the loaded data."); }
+            } else { assert!(false, "No task could not be retrieved from the loaded data."); }
 
             assert!(task_name==actual_task_name,format!("Expected first task named {} actual name {}",task_name,actual_task_name));
         },
@@ -86,4 +88,31 @@ fn reject_new_task_with_same_name () {
         Ok(_) => { assert!(false,format!("Adding 2 tasks with name {} was possible",task_name)); },
         Err(message) => { assert!(true,format!("Adding another tasks with name {} was rejected",task_name)); },
     };
+}
+
+#[test]
+fn measure_time_spent_on_task() {
+    let mut todo = ToDo::new();
+    let task_name = format!("task1");
+    todo.add(task_name.clone(), Vec::new());
+    let actual_time_spent_on_task = Duration::new(5, 0);
+    todo.clock_in(task_name.clone());
+    sleep(actual_time_spent_on_task);
+    match todo.clock_out(task_name) {
+        Ok(_) => {}
+        Err(message) => { assert!(false, message); }
+    }
+
+    let mut recorded_time_spent_on_task = format!("{:?}", Duration::new(0, 0));
+    if let Some(task) = todo.to_simple_report().get(0) {
+        match task.get(1) {
+            Some(duration) => { recorded_time_spent_on_task = duration.to_string(); },
+            _ => {
+                assert!(false, "Task duration could not be retrieved.");
+            },
+        };
+    } else { assert!(false, "No task could not be retrieved from the loaded data."); }
+
+    let actual_time_spent_on_task = format!("{}", actual_time_spent_on_task.to_hhmmss());
+    assert!(actual_time_spent_on_task == recorded_time_spent_on_task, format!("Expected duration {} measured duration {}", actual_time_spent_on_task, recorded_time_spent_on_task));
 }
