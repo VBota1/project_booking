@@ -16,6 +16,7 @@ A Task is defeind by:
     Loading/Saving ToDo from/to a file
     Adding a new Task
     Clock In a Task
+    Clock Out of a Task
     CLI interface
 ```
 
@@ -26,7 +27,6 @@ A Task is defeind by:
 
 **To be Done High Prio:**
 ```
-    clock out of a task/project
     report time spent on one or all tasks
     report time spent on one or all labels
     display help information
