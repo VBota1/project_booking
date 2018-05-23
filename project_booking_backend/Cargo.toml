@@ -6,3 +6,4 @@ authors = ["Viorel Bota <botaviorel@gmail.com>"]
 [dependencies]
 todo = { path = "todo" }
 logger = { path = "logger" }
+formaters = { path = "formaters" }

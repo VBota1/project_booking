@@ -59,8 +59,8 @@ fn retrieve_from_storage() {
         Ok(mut reterived_data) => {
             let mut actual_task_name: String = format!("");
 
-            if let Some(task) = reterived_data.to_simple_report().get(0) {
-                match task.get(0) {
+            if let Some(task) = reterived_data.to_report().get(0) {
+                match task.get(1) {
                     Some(task_name) => { actual_task_name = task_name.clone().to_string() },
                     _ => { assert!(false, "Task name could not be retrieved from the loaded data."); }
                 }
@@ -104,8 +104,8 @@ fn measure_time_spent_on_task() {
     }
 
     let mut recorded_time_spent_on_task = format!("{:?}", Duration::new(0, 0));
-    if let Some(task) = todo.to_simple_report().get(0) {
-        match task.get(1) {
+    if let Some(task) = todo.to_report().get(0) {
+        match task.get(2) {
             Some(duration) => { recorded_time_spent_on_task = duration.to_string(); },
             _ => {
                 assert!(false, "Task duration could not be retrieved.");
@@ -113,6 +113,8 @@ fn measure_time_spent_on_task() {
         };
     } else { assert!(false, "No task could not be retrieved from the loaded data."); }
 
-    let actual_time_spent_on_task = format!("{}", actual_time_spent_on_task.to_hhmmss());
+    let actual_time_spent_on_task = format!("{}", actual_time_spent_on_task.as_hhmmss());
     assert!(actual_time_spent_on_task == recorded_time_spent_on_task, format!("Expected duration {} measured duration {}", actual_time_spent_on_task, recorded_time_spent_on_task));
 }
+
+//TODO HIGH PRIO deserialization after clockOut using CLI (load and save) fails

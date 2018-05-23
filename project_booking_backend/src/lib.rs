@@ -4,6 +4,10 @@ extern crate logger;
 use logger::*;
 use std::env::Args;
 
+extern crate formaters;
+
+use formaters::AsString;
+
 //TODO MEDIUM PRIO GUI (QT)
 //TODO MEDIUM PRIO import tasks from Jira
 //TODO MEDIUM PRIO export tasks to PTT
@@ -28,10 +32,8 @@ pub fn handle_command(mut args: Args) -> Result<String, String> {
                     clock_out(args)
                 },
                 "report" => {
-                    trace(format!("Clock out request detected"));
-                    //TODO HIGH PRIO report time spent on one or all tasks
-                    //TODO HIGH PRIO report time spent on one or all labels
-                    Err(warn(format!("report command not implemented")))
+                    trace(format!("Report request detected"));
+                    report()
                 },
                 "help" => {
                     trace(format!("Help request detected"));
@@ -47,6 +49,18 @@ pub fn handle_command(mut args: Args) -> Result<String, String> {
             Err(warn(format!("No command received. {}", recommend_help())))
         },
     }
+}
+
+fn report() -> Result<String, String> {
+    let mut to_do: ToDo = get_to_do(None);
+
+    if 0 == to_do.count() {
+        let message = format!("No tasks are recorded");
+        warn(message.clone());
+        return Err(message)
+    }
+
+    Ok(to_do.to_report().as_string())
 }
 
 //TODO LOW PRIO optimize pass function as a parameter

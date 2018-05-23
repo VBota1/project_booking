@@ -43,16 +43,16 @@ impl ToDo {
         }
         output
     }
-
-    pub fn to_simple_report (&mut self) -> Vec<Vec<String>> {
-        let mut output = Vec::new();
-        let tasklist = self.list.as_slice();
-        for t in tasklist {
-            output.push(t.name_and_duration_as_vec_string());
+    /*TODO not used
+        pub fn to_simple_report (&mut self) -> Vec<Vec<String>> {
+            let mut output = Vec::new();
+            let tasklist = self.list.as_slice();
+            for t in tasklist {
+                output.push(t.name_and_duration_as_vec_string());
+            }
+            output
         }
-        output
-    }
-
+    */
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {
         let serilazed_data;
         match serde_json::to_string(self) {
@@ -72,7 +72,7 @@ impl ToDo {
                 match file.write_all(serilazed_data.as_bytes() ) {
                     Ok(_) => {},
                     Err(error) => {
-                        return Err(format!(" \"{}\" occured while saving data to \"{}\"", error.to_string(), backup_file.clone()));
+                        return Err(format!(" \"{}\" occurred while saving data to \"{}\"", error.to_string(), backup_file.clone()));
                     }
                 };
             },
@@ -88,7 +88,7 @@ impl ToDo {
         match self.list.index_of_task_by_name(task_name.clone()) {
             Ok(index) => {
                 self.list.get_mut(index).unwrap().clock_in();
-                Ok(format!("Clocked in taks \"{}\"", task_name))
+                Ok(format!("Clocked in task \"{}\"", task_name))
             },
             Err(message) => {
                 Err(message)
@@ -187,3 +187,29 @@ impl FindTask for Vec<Task> {
 
 #[cfg(test)]
 mod test_set;
+
+/*
+LICENSE for extern crates serde, serde_json and serde_derive:
+Copyright (c) 2014 The Rust Project Developers
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+*/
