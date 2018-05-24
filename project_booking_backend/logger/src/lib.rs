@@ -9,13 +9,6 @@ use std::fs::OpenOptions;
 pub fn initiate_logging(log_name: Option<String>) -> Result<String,String>
 {
     let log_file = log_name.unwrap_or(format!("trace.log"));
-    /*
-        let file = OpenOptions::new()
-            .append(true)
-            .create(true)
-            .open(log_file)?;
-        log_to(file, max_log_level);
-        */
 
     let file = match OpenOptions::new()
         .append(true)
@@ -29,16 +22,6 @@ pub fn initiate_logging(log_name: Option<String>) -> Result<String,String>
     log_to(file, LevelFilter::Trace);
 
     Ok(format!("Logging initiated"))
-    /*
-        match simple_logging::log_to_file(log_file, LevelFilter::Trace) {
-            Ok(_) => {
-                Ok(format!("Logging initiated"))
-            },
-            Err(error) => {
-                Err(format!(" {} occurred while trying to initiate logging",error))
-            },
-        }
-        */
 }
 
 pub fn error(message: String) -> String {

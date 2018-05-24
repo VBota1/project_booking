@@ -18,6 +18,7 @@ A Task is defeind by:
     Clock In a Task
     Clock Out of a Task
     CLI interface
+    Report by Task
 ```
 
 **Known issues:**
@@ -27,7 +28,6 @@ A Task is defeind by:
 
 **To be Done High Prio:**
 ```
-    report time spent on one or all tasks
     report time spent on one or all labels
     display help information
 ```  

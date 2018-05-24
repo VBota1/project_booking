@@ -43,16 +43,7 @@ impl ToDo {
         }
         output
     }
-    /*TODO not used
-        pub fn to_simple_report (&mut self) -> Vec<Vec<String>> {
-            let mut output = Vec::new();
-            let tasklist = self.list.as_slice();
-            for t in tasklist {
-                output.push(t.name_and_duration_as_vec_string());
-            }
-            output
-        }
-    */
+
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {
         let serilazed_data;
         match serde_json::to_string(self) {
@@ -67,7 +58,7 @@ impl ToDo {
 
         let backup_file = save_file.unwrap_or(backup_file());
 
-        match OpenOptions::new().write(true).create(true).open(backup_file.clone()) {
+        match OpenOptions::new().create(true).write(true).truncate(true).open(backup_file.clone()) {
             Ok(mut file) => {
                 match file.write_all(serilazed_data.as_bytes() ) {
                     Ok(_) => {},
@@ -110,25 +101,6 @@ impl ToDo {
     pub fn count(&self) -> usize {
         self.list.len()
     }
-    /*TODO not used
-    pub fn remove_by_name ( &mut self, p_name: String ) {
-        match self.list.index_of_task_by_name(p_name) {
-            Ok(index) => {
-                self.list.remove(index);
-            },
-            Err(_) => {},
-        };
-    }
-
-    pub fn remove ( &mut self, p_task: Task ) {
-        match self.list.index_of(p_task) {
-            Ok(index) => {
-                self.list.remove(index);
-            },
-            Err(_) => {},
-        };
-    }
-    */
 }
 
 fn backup_file () -> String {
@@ -143,7 +115,7 @@ pub fn load(load_file: Option<String>) -> Result<ToDo, String> {
             file
         },
         Err(error) => {
-            return Err(format!(" \"{}\" while reading file \"{}\"", error.to_string(), backup_file.clone()));
+            return Err(format!("\"{}\" while reading file \"{}\"", error.to_string(), backup_file.clone()));
         },
     };
 
@@ -169,21 +141,6 @@ impl FindTaskByName for Vec<Task> {
         }
     }
 }
-
-/*TODO not used
-trait FindTask {
-    fn index_of(&self, Task) -> Result<usize, String>;
-}
-
-impl FindTask for Vec<Task> {
-    fn index_of(&self, to_find: Task) -> Result<usize, String> {
-        match self.iter().position(|o| o.eq(&to_find) ) {
-            Some(index) => Ok(index),
-            None => Err(format!("Task {} was not found in vector",to_find.name())),
-        }
-    }
-}
-*/
 
 #[cfg(test)]
 mod test_set;

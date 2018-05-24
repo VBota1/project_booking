@@ -118,3 +118,31 @@ fn measure_time_spent_on_task() {
 }
 
 //TODO HIGH PRIO deserialization after clockOut using CLI (load and save) fails
+#[test]
+fn load_data_after_clock_out() {
+    let mut todo = ToDo::new();
+    let task_name = format!("task1");
+    todo.add(task_name.clone(), Vec::new());
+
+    todo.clock_in(task_name.clone());
+    todo.save(None);
+
+    todo = match load(None) {
+        Ok(todo) => { todo },
+        Err(error) => {
+            assert!(false, "Loading data failed with error \"{}\" after clockIn and save perfomed.", error);
+            ToDo::new()
+        },
+    };
+    todo.clock_out(task_name);
+    todo.save(None);
+
+    match load(None) {
+        Ok(todo) => {
+            assert!(true, "Loaded data successfully after clockOut and save perfomed.");
+        },
+        Err(error) => {
+            assert!(false, "Loading data failed with error \"{}\" after clockOut and save perfomed.", error);
+        },
+    };
+}
