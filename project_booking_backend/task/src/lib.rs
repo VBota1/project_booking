@@ -48,8 +48,9 @@ impl Task {
         output
     }
 
-    pub fn clock_in(&mut self) {
+    pub fn clock_in(&mut self) -> Result<String, String> {
         self._clock_in_timestamp = Some(SystemTime::now());
+        Ok(format!("Clocked in task \"{}\"", self.name()))
     }
 
     pub fn clock_out(&mut self) -> Result<String, String> {

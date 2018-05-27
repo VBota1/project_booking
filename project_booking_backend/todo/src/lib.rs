@@ -76,26 +76,13 @@ impl ToDo {
     }
 
     pub fn clock_in(&mut self, task_name: String) -> Result<String, String> {
-        match self.list.index_of_task_by_name(task_name.clone()) {
-            Ok(index) => {
-                self.list.get_mut(index).unwrap().clock_in();
-                Ok(format!("Clocked in task \"{}\"", task_name))
-            },
-            Err(message) => {
-                Err(message)
-            },
-        }
+        let index = self.list.index_of_task_by_name(task_name.clone())?;
+        self.list.get_mut(index).unwrap().clock_in()
     }
 
     pub fn clock_out(&mut self, task_name: String) -> Result<String, String> {
-        match self.list.index_of_task_by_name(task_name.clone()) {
-            Ok(index) => {
-                self.list.get_mut(index).unwrap().clock_out()
-            },
-            Err(message) => {
-                Err(message)
-            },
-        }
+        let index = self.list.index_of_task_by_name(task_name.clone())?;
+        self.list.get_mut(index).unwrap().clock_out()
     }
 
     pub fn count(&self) -> usize {

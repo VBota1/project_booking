@@ -1,6 +1,6 @@
 [package]
 name = "identifiers"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Viorel Bota <botaviorel@gmail.com>"]
 
 [dependencies]

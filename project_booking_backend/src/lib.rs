@@ -70,18 +70,18 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
 }
 
 fn report(to_do: &mut ToDo) -> Result<String, String> {
-    if 0 == to_do.count() { return Err(warn(no_task_recorderd_message())); }
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     Ok(to_do.to_report().as_string())
 }
 
-fn no_task_recorderd_message() -> String {
+fn no_tasks_recorderd_message() -> String {
     format!("No tasks are recorded")
 }
 
 //TODO LOW PRIO optimize pass function as a parameter
 fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
-    if 0 == to_do.count() { return Err(warn(no_task_recorderd_message())); }
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match args.nth(0) {
         Some(task_name) => {
@@ -97,7 +97,7 @@ fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String>
 }
 
 fn clock_in(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
-    if 0 == to_do.count() { return Err(warn(no_task_recorderd_message())); }
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match args.nth(0) {
         Some(task_name) => {
@@ -128,7 +128,7 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
 }
 
 pub fn store(to_do: ToDo) -> Result<String, String> {
-    if 0 == to_do.count() { return Err(warn(no_task_recorderd_message())); }
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     forced_store(to_do)
 }
