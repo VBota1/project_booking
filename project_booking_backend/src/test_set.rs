@@ -5,6 +5,39 @@ use std::thread::sleep;
 use super::formaters::AsHHMMSS;
 
 #[test]
+fn test_handle_command_as_service() {
+    let mut to_do: ToDo = ToDo::new();
+    forced_store(to_do);
+
+    let aplication_name = format!("test");
+    let command = format!("new");
+    let task_name = format!("task512");
+    let label_1 = format!("label_1");
+    let label_2 = format!("label_2");
+    let args_vec = vec![aplication_name.clone(), command, task_name.clone(), label_1.clone(), label_2.clone()];
+    handle_command_as_service(args_vec);
+
+    let command = format!("clockIn");
+    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
+    handle_command_as_service(args_vec);
+
+    let actual_time_spent_on_task = Duration::new(5, 0);
+    sleep(actual_time_spent_on_task);
+
+    let command = format!("clockOut");
+    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
+    handle_command_as_service(args_vec);
+
+    let command = format!("report");
+    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
+    let actual_report = handle_command_as_service(args_vec);
+
+    let expected_report = format!("1 {} {} None {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+
+    assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
+}
+
+#[test]
 fn control_1_task_as_service() {
     let mut to_do: ToDo = ToDo::new();
 
