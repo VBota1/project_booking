@@ -1,5 +1,5 @@
 # project_booking
-traking time on projects/tasks
+Traking time on projects/tasks
 
 A ToDo is a list of Tasks.  
 A Task is defeind by:
@@ -9,6 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
+**Version: 011011000**
 
 **Implemented:**
 ```
