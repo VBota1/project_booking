@@ -88,6 +88,11 @@ impl Task {
     pub fn time_spent(&self) -> Duration {
         self._time_spent.clone()
     }
+
+    pub fn add_time_spent(&mut self, time: Duration) -> Duration {
+        self._time_spent += time;
+        self.time_spent()
+    }
 }
 
 /*LICENSE for extern crates serde, serde_json and serde_derive:

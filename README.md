@@ -30,12 +30,16 @@ A Task is defeind by:
 
 **To be Done High Prio:**
 ```
+    add time to task
     display help information
+    display license information
 ```  
   
 **To be Done Medium Prio:**
 ```
+    remove task
     implment QT Gui
+    create a new database at the start of each month
 ``` 
   
 **To be Done Low Prio:**

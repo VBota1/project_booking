@@ -113,6 +113,11 @@ impl ToDo {
     pub fn count(&self) -> usize {
         self.list.len()
     }
+
+    pub fn add_time_spent_to_task(&mut self, task_name: String, time: Duration) -> Result<Duration, String> {
+        let index = self.list.index_of_task_by_name(task_name)?;
+        Ok(self.list.get_mut(index).unwrap().add_time_spent(time))
+    }
 }
 
 fn backup_file () -> String {

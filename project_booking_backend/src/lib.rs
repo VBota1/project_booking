@@ -7,16 +7,10 @@ use logger::*;
 use formaters::AsString;
 use std::slice::Iter;
 
-//TODO HIGH PRIO add duration by hand hh:mm
-//TODO MEDIUM PRIO remove task
 //TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
-//TODO MEDIUM PRIO import tasks from Jira
-//TODO MEDIUM PRIO export tasks to PTT
-//TODO LOW PRIO detect AFK and stop recoding
-//TODO LOW PRIO detect return on Keyboard and ask what task I am working on
-
-//TODO LOW PRIO investigate where ? operator can simplify syntax
+//TODO LOW PRIO import tasks from Jira
+//TODO LOW PRIO export tasks to PTT
 
 pub struct Response {
     pub message: String,
@@ -61,10 +55,25 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
                     trace(format!("Report time spent on labels request detected"));
                     Response { message: report_time_on_labels(to_do).to_string(), should_save: false }
                 },
+                "addTime" => {
+                    trace(format!("Add time request detected"));
+                    //TODO HIGH PRIO add time to task
+                    Response { message: add_time(args, to_do).to_string(), should_save: true }
+                }
+                "remove" => {
+                    trace(format!("Remove request detected"));
+                    //TODO MEDIUM PRIO remove task
+                    Response { message: warn(format!("remove command not implemented")), should_save: false }
+                }
                 "help" => {
                     trace(format!("Help request detected"));
                     //TODO HIGH PRIO return help information
                     Response { message: warn(format!("help command not implemented")), should_save: false }
+                },
+                "license" => {
+                    trace(format!("License request detected"));
+                    //TODO HIGH PRIO return license information
+                    Response { message: warn(format!("license command not implemented")), should_save: false }
                 },
                 _ => {
                     Response { message: warn(format!("Unknown command \"{}\". {}", command, recommend_help())), should_save: false }
@@ -133,6 +142,17 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
                 Ok(message) => { Ok(trace(message)) },
                 Err(message) => { Err(error(message)) },
             }
+        },
+        None => {
+            Err(warn(format!("No task name received. \"{}\"", recommend_help())))
+        },
+    }
+}
+
+fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+    match args.nth(0) {
+        Some(task) => {
+            Err(warn(format!("Function add time is missing a string to int cast!")))
         },
         None => {
             Err(warn(format!("No task name received. \"{}\"", recommend_help())))
