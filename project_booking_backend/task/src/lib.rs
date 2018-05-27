@@ -1,8 +1,8 @@
 use std::time::{Duration, SystemTime};
-extern crate search;
-extern crate formaters;
 use formaters::AsHHMMSS;
 
+extern crate search;
+extern crate formaters;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -81,6 +81,13 @@ impl Task {
         self._id.clone()
     }
 
+    pub fn labels(&self) -> Vec<String> {
+        self._labels.to_vec()
+    }
+
+    pub fn time_spent(&self) -> Duration {
+        self._time_spent.clone()
+    }
 }
 
 /*LICENSE for extern crates serde, serde_json and serde_derive:

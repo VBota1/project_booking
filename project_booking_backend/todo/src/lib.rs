@@ -1,11 +1,14 @@
 extern crate identifiers;
 extern crate task;
+extern crate formaters;
+
 use identifiers::UniqueIdentifier;
 use task::Task;
 use std::fs::OpenOptions;
 use std::io::Write;
-
-extern crate formaters;
+use std::collections::HashMap;
+use std::time::Duration;
+use formaters::AsHHMMSS;
 
 #[macro_use]
 extern crate serde_derive;
@@ -35,13 +38,35 @@ impl ToDo {
         }
     }
 
-    pub fn to_report (&mut self) -> Vec<Vec<String>> {
+    pub fn to_report(&self) -> Vec<Vec<String>> {
         let mut output = Vec::new();
         let tasklist = self.list.as_slice();
         for t in tasklist {
             output.push(t.as_vec_string());
         }
         output
+    }
+
+    pub fn report_time_spent_on_labels(&self) -> Vec<Vec<String>> {
+        let mut time_on_labels = HashMap::new();
+
+        let tasklist = self.list.as_slice();
+        for t in tasklist {
+            let time_per_label = t.time_spent().checked_div(t.labels().len() as u32).unwrap_or(t.time_spent());
+
+            let labels = t.labels();
+            for l in labels {
+                let value = time_on_labels.entry(l).or_insert(Duration::new(0, 0));
+                *value += time_per_label;
+            }
+        }
+
+        let mut result: Vec<Vec<String>> = Vec::new();
+        for (label, time) in time_on_labels {
+            let mut line: Vec<String> = vec![label, time.as_hhmmss()];
+            result.push(line);
+        }
+        result
     }
 
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {

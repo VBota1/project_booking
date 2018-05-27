@@ -1,11 +1,15 @@
 extern crate todo;
-use todo::*;
-extern crate logger;
-use logger::*;
 extern crate formaters;
+extern crate logger;
+
+use todo::*;
+use logger::*;
 use formaters::AsString;
 use std::slice::Iter;
 
+//TODO HIGH PRIO add duration by hand hh:mm
+//TODO MEDIUM PRIO remove task
+//TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
 //TODO MEDIUM PRIO import tasks from Jira
 //TODO MEDIUM PRIO export tasks to PTT
@@ -53,6 +57,10 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
                     trace(format!("Report request detected"));
                     Response { message: report(to_do).to_string(), should_save: false }
                 },
+                "reportByLabel" => {
+                    trace(format!("Report time spent on labels request detected"));
+                    Response { message: report_time_on_labels(to_do).to_string(), should_save: false }
+                },
                 "help" => {
                     trace(format!("Help request detected"));
                     //TODO HIGH PRIO return help information
@@ -69,17 +77,22 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
     }
 }
 
-fn report(to_do: &mut ToDo) -> Result<String, String> {
+fn report(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     Ok(to_do.to_report().as_string())
+}
+
+fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
+
+    Ok(to_do.report_time_spent_on_labels().as_string())
 }
 
 fn no_tasks_recorderd_message() -> String {
     format!("No tasks are recorded")
 }
 
-//TODO LOW PRIO optimize pass function as a parameter
 fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 

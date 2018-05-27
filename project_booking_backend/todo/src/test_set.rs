@@ -138,10 +138,69 @@ fn load_data_after_clock_out() {
 
     match load(None) {
         Ok(todo) => {
-            assert!(true, "Loaded data successfully after clockOut and save perfomed.");
+            assert!(true, "Loaded data successfully after clockOut and save performed.");
         },
         Err(error) => {
             assert!(false, "Loading data failed with error \"{}\" after clockOut and save perfomed.", error);
         },
     };
+}
+
+#[test]
+fn report_time_by_label() {
+    let task1 = format!("task1");
+    let task2 = format!("task2");
+    let task3 = format!("task3");
+    let task4 = format!("task4");
+    let label1 = format!("label_1");
+    let label2 = format!("label_2");
+    let label3 = format!("label_3");
+    let mut todo = ToDo::new();
+    todo.add(task1.clone(), vec![label1.clone()]);
+    todo.add(task2.clone(), vec![label2.clone()]);
+    todo.add(task3.clone(), vec![label1.clone(), label2.clone()]);
+    todo.add(task4.clone(), vec![label3.clone()]);
+    todo.clock_in(task1.clone());
+    todo.clock_in(task2.clone());
+    todo.clock_in(task3.clone());
+    todo.clock_in(task4.clone());
+
+    let actual_time_spent_on_task = Duration::new(6, 0);
+    sleep(actual_time_spent_on_task);
+
+    todo.clock_out(task1);
+    todo.clock_out(task2);
+    todo.clock_out(task3);
+    todo.clock_out(task4);
+
+    let actual_report = todo.report_time_spent_on_labels();
+
+    for line in actual_report {
+        let label_name = format!("{}", line.get(0).unwrap());
+        let time_spent = format!("{}", line.get(1).unwrap());
+        if label_name == label1 {
+            let expected = Duration::new(9, 0).as_hhmmss();
+            assert!(time_spent == expected, "Label {} Actual {} Expected {}", label1, time_spent, expected);
+        } else {
+            if label_name == label2 {
+                let expected = Duration::new(9, 0).as_hhmmss();
+                assert!(time_spent == expected, "Label {} Actual {} Expected {}", label2, time_spent, expected);
+            } else {
+                if label_name == label3 {
+                    let expected = Duration::new(6, 0).as_hhmmss();
+                    assert!(time_spent == expected, "Label {} Actual {} Expected {}", label3, time_spent, expected);
+                } else {
+                    assert!(false, "Unexpected label \"{}\" was reported", label_name);
+                }
+            }
+        }
+    }
+    /*
+    match actual_report.index_of(label1) {
+        Some(index) => {
+            assert!(actual_report.get(index).get(1)==Duration::new(9,0).as_hhmmss(),"\"{}\" Expected \"{}\" Actual \"{}\"",label1,Duration::new(9,0).as_hhmmss(),actual_report.get(index).get(1));
+        },
+        None => { assert!(false,"Label \"{}\" was not found",label1)}
+    };
+*/
 }
