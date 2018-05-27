@@ -117,7 +117,6 @@ fn measure_time_spent_on_task() {
     assert!(actual_time_spent_on_task == recorded_time_spent_on_task, format!("Expected duration {} measured duration {}", actual_time_spent_on_task, recorded_time_spent_on_task));
 }
 
-//TODO HIGH PRIO deserialization after clockOut using CLI (load and save) fails
 #[test]
 fn load_data_after_clock_out() {
     let mut todo = ToDo::new();
