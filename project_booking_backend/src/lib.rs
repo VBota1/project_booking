@@ -2,11 +2,9 @@ extern crate todo;
 use todo::*;
 extern crate logger;
 use logger::*;
-use std::env::Args;
-
 extern crate formaters;
-
 use formaters::AsString;
+use std::slice::Iter;
 
 //TODO MEDIUM PRIO GUI (QT)
 //TODO MEDIUM PRIO import tasks from Jira
@@ -14,7 +12,7 @@ use formaters::AsString;
 //TODO LOW PRIO detect AFK and stop recoding
 //TODO LOW PRIO detect return on Keyboard and ask what task I am working on
 
-pub fn handle_command(mut args: Args) -> Result<String, String> {
+pub fn handle_command(mut args: Iter<String>) -> Result<String, String> {
 
     match args.nth(1) {
         Some(command) => {
@@ -41,7 +39,7 @@ pub fn handle_command(mut args: Args) -> Result<String, String> {
                     Err(warn(format!("help command not implemented")))
                 },
                 _ => {
-                    Err(warn(format!("Unkown command \"{}\". {}", command, recommend_help())))
+                    Err(warn(format!("Unknown command \"{}\". {}", command, recommend_help())))
                 },
             }
         },
@@ -64,7 +62,7 @@ fn report() -> Result<String, String> {
 }
 
 //TODO LOW PRIO optimize pass function as a parameter
-fn clock_out(mut args: Args) -> Result<String, String> {
+fn clock_out(mut args: Iter<String>) -> Result<String, String> {
     let mut to_do: ToDo = get_to_do(None);
 
     if 0 == to_do.count() {
@@ -74,8 +72,8 @@ fn clock_out(mut args: Args) -> Result<String, String> {
     }
 
     match args.nth(0) {
-        Some(task) => {
-            match to_do.clock_out(task) {
+        Some(task_name) => {
+            match to_do.clock_out(task_name.to_string()) {
                 Ok(message) => {
                     trace(message.clone());
                     store(to_do);
@@ -92,7 +90,7 @@ fn clock_out(mut args: Args) -> Result<String, String> {
     }
 }
 
-fn clock_in(mut args: Args) -> Result<String, String> {
+fn clock_in(mut args: Iter<String>) -> Result<String, String> {
     let mut to_do: ToDo = get_to_do(None);
 
     if 0 == to_do.count() {
@@ -102,8 +100,8 @@ fn clock_in(mut args: Args) -> Result<String, String> {
     }
 
     match args.nth(0) {
-        Some(task) => {
-            match to_do.clock_in(task) {
+        Some(task_name) => {
+            match to_do.clock_in(task_name.to_string()) {
                 Ok(message) => {
                     trace(message.clone());
                     store(to_do);
@@ -120,12 +118,12 @@ fn clock_in(mut args: Args) -> Result<String, String> {
     }
 }
 
-fn create_new_task_from_arguments(mut args: Args) -> Result<String, String> {
+fn create_new_task_from_arguments(mut args: Iter<String>) -> Result<String, String> {
     let mut to_do = get_to_do(None);
 
     match args.nth(0) {
         Some(task) => {
-            let labels: Vec<String> = args.collect();
+            let labels: Vec<String> = args.cloned().collect();
             match to_do.add(task.clone(), labels) {
                 Ok(message) => {
                     trace(message.clone());
@@ -182,3 +180,6 @@ impl ToString for Result<String, String>
         }
     }
 }
+
+#[cfg(test)]
+mod test_set;
