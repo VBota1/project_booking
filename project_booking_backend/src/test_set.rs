@@ -6,7 +6,7 @@ use super::formaters::AsHHMMSS;
 
 #[test]
 fn test_handle_command_as_service() {
-    let mut to_do: ToDo = ToDo::new();
+    let to_do: ToDo = ToDo::new();
     forced_store(to_do);
 
     let aplication_name = format!("test");
@@ -71,7 +71,7 @@ fn control_1_task_as_service() {
 
     let actual_report = match report(&mut to_do) {
         Ok(message) => { message },
-        Err(message) => {
+        Err(_) => {
             assert!(false, "ToDo report could not be extracted!");
             format!("")
         }

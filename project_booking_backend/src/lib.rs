@@ -15,13 +15,15 @@ use std::slice::Iter;
 //TODO LOW PRIO investigate where ? operator can simplify syntax
 
 pub struct Response {
-    message: String,
-    should_save: bool,
+    pub message: String,
+    pub should_save: bool,
 }
 
 pub fn handle_command_as_service(args: Vec<String>) -> String {
     let mut to_do: ToDo = get_to_do(None);
-    let result = handle_command_as_application(args.iter(), &mut to_do);
+    let mut args = args.iter();
+    args.next();
+    let result = handle_command_as_application(args, &mut to_do);
     if true == result.should_save {
         match store(to_do) {
             Ok(_) => {},
@@ -32,8 +34,7 @@ pub fn handle_command_as_service(args: Vec<String>) -> String {
 }
 
 pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -> Response {
-
-    match args.nth(1) {
+    match args.nth(0) {
         Some(command) => {
             match command.as_str() {
                 "new" => {
@@ -126,7 +127,7 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
     }
 }
 
-fn store(to_do: ToDo) -> Result<String, String> {
+pub fn store(to_do: ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_task_recorderd_message())); }
 
     forced_store(to_do)
@@ -139,7 +140,7 @@ fn forced_store(to_do: ToDo) -> Result<String, String> {
     }
 }
 
-fn get_to_do(load_file: Option<String>) -> ToDo {
+pub fn get_to_do(load_file: Option<String>) -> ToDo {
     match load(load_file) {
         Ok(todo) => {
             trace(format!("ToDo loaded from database"));
