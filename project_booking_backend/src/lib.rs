@@ -6,6 +6,9 @@ use todo::*;
 use logger::*;
 use formaters::AsString;
 use std::slice::Iter;
+use std::time::Duration;
+use formaters::AsHHMMSS;
+
 
 //TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
@@ -150,14 +153,47 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
 }
 
 fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
-    match args.nth(0) {
-        Some(task) => {
-            Err(warn(format!("Function add time is missing a string to int cast!")))
+    let task_name = match args.nth(0) {
+        Some(task) => { task },
+        None => {
+            return Err(warn(format!("No task name received. \"{}\"", recommend_help())));
+        },
+    };
+
+    let (hours, minutes) = match args.nth(0) {
+        Some(time_argument) => {
+            let time: Vec<String> = time_argument.split(':').map(|s| format!("{}", s)).collect();
+            let error_message = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+
+            let mut h = match time.get(0) {
+                Some(h) => { h },
+                None => { return Err(warn(error_message)); }
+            };
+            let mut min = match time.get(1) {
+                Some(min) => { min },
+                None => { return Err(warn(error_message)); }
+            };
+
+            let h = match h.parse::<u32>() {
+                Ok(value) => { value },
+                Err(_) => { return Err(warn(error_message)); }
+            };
+
+            let min = match min.parse::<u32>() {
+                Ok(value) => { value },
+                Err(_) => { return Err(warn(error_message)); }
+            };
+
+            (h, min)
         },
         None => {
-            Err(warn(format!("No task name received. \"{}\"", recommend_help())))
-        },
-    }
+            return Err(warn(format!("No time to be added to the task was received. \"{}\"", recommend_help())));
+        }
+    };
+
+    let secs = (hours * 3600 + minutes * 60) as u64;
+    let new_time = to_do.add_time_spent_to_task(task_name.clone(), Duration::new(secs, 0))?;
+    Ok(trace(format!("Time spent on task \"{}\" is now \"{}\"", task_name, new_time.as_hhmmss())))
 }
 
 pub fn store(to_do: ToDo) -> Result<String, String> {
