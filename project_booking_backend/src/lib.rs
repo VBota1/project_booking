@@ -60,7 +60,6 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
                 },
                 "addTime" => {
                     trace(format!("Add time request detected"));
-                    //TODO HIGH PRIO add time to task
                     Response { message: add_time(args, to_do).to_string(), should_save: true }
                 }
                 "remove" => {

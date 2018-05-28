@@ -139,14 +139,56 @@ fn check_add_time() {
     let args = args_vec.iter();
     create_new_task_from_arguments(args, &mut to_do);
 
-    let time = format!("01:01");
-    let args_vec = vec![task_name.clone(), time];
+    let time_argument = format!("01:01");
+    let args_vec = vec![task_name.clone(), time_argument];
     let args = args_vec.iter();
     match add_time(args, &mut to_do) {
         Ok(response) => {
-            assert!(response == format!("Time spent on task \"{}\" is now \"{}\""))
+            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name.clone());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
         },
-        Err(response) => {}
+        Err(response) => {
+            assert!(false, response);
+        }
+    };
+
+    let time_argument = format!("0101");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match add_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        },
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+    };
+
+    let time_argument = format!("0a:01");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match add_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        },
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+    };
+
+    let time_argument = format!("01:o1");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match add_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        },
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
     };
 }
 /*

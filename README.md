@@ -9,7 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 011011000**
+**Version: 013011000**
 
 **Implemented:**
 ```
@@ -21,6 +21,7 @@ A Task is defeind by:
     CLI interface
     Report by Task
     Report by Label
+    Add Time to Task
 ```
 
 **Known issues:**
@@ -30,7 +31,6 @@ A Task is defeind by:
 
 **To be Done High Prio:**
 ```
-    add time to task
     display help information
     display license information
 ```  
