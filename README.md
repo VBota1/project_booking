@@ -9,7 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 013011000**
+**Version: 014011000**
 
 **Implemented:**
 ```
@@ -22,6 +22,7 @@ A Task is defeind by:
     Report by Task
     Report by Label
     Add Time to Task
+    Remove Task
 ```
 
 **Known issues:**
@@ -37,7 +38,6 @@ A Task is defeind by:
   
 **To be Done Medium Prio:**
 ```
-    remove task
     implment QT Gui
     create a new database at the start of each month
 ``` 

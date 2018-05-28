@@ -191,6 +191,29 @@ fn check_add_time() {
         }
     };
 }
+
+#[test]
+fn delete_task() {
+    let mut todo = ToDo::new();
+    let task_name = format!("task1");
+    todo.add(task_name.clone(), Vec::new());
+    todo.add(format!("task2"), Vec::new());
+
+    let args_vec = vec![task_name.clone()];
+    let args = args_vec.iter();
+    match delete(args, &mut todo) {
+        Ok(message) => {
+            let expected_message = format!("Task {} was removed.", task_name);
+            assert!(message == expected_message, "Expected {} Actual {}", expected_message, message);
+        },
+        Err(message) => {
+            assert!(false, message);
+        }
+    };
+
+    assert!(todo.count() == 1, "Expected numer of Tasks 1. Actual {}", todo.count());
+}
+
 /*
 #[test]
 TODO add fn help() {

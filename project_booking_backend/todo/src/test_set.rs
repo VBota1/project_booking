@@ -195,12 +195,4 @@ fn report_time_by_label() {
             }
         }
     }
-    /*
-    match actual_report.index_of(label1) {
-        Some(index) => {
-            assert!(actual_report.get(index).get(1)==Duration::new(9,0).as_hhmmss(),"\"{}\" Expected \"{}\" Actual \"{}\"",label1,Duration::new(9,0).as_hhmmss(),actual_report.get(index).get(1));
-        },
-        None => { assert!(false,"Label \"{}\" was not found",label1)}
-    };
-*/
 }

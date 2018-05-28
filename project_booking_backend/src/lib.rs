@@ -9,7 +9,6 @@ use std::slice::Iter;
 use std::time::Duration;
 use formaters::AsHHMMSS;
 
-
 //TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
 //TODO LOW PRIO import tasks from Jira
@@ -62,10 +61,9 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
                     trace(format!("Add time request detected"));
                     Response { message: add_time(args, to_do).to_string(), should_save: true }
                 }
-                "remove" => {
-                    trace(format!("Remove request detected"));
-                    //TODO MEDIUM PRIO remove task
-                    Response { message: warn(format!("remove command not implemented")), should_save: false }
+                "delete" => {
+                    trace(format!("Delete request detected"));
+                    Response { message: delete(args, to_do).to_string(), should_save: false }
                 }
                 "help" => {
                     trace(format!("Help request detected"));
@@ -86,6 +84,19 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
             Response { message: warn(format!("No command received. {}", recommend_help())), should_save: false }
         },
     }
+}
+
+fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
+
+    let task_name = match args.nth(0) {
+        Some(task) => { task.clone() },
+        None => {
+            return Err(warn(format!("No task name received. \"{}\"", recommend_help())));
+        },
+    };
+
+    to_do.remove_task(task_name)
 }
 
 fn report(to_do: &ToDo) -> Result<String, String> {
@@ -152,6 +163,8 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
 }
 
 fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
+
     let task_name = match args.nth(0) {
         Some(task) => { task },
         None => {
