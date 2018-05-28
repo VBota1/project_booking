@@ -26,7 +26,7 @@ fn main() {
     };
 
     match command.as_str() {
-        "applicationMode" => {
+        APPLICATIONMODE => {
             trace(format!("Application mode request detected"));
             application_mode();
         },
@@ -67,7 +67,7 @@ fn application_mode() {
         };
 
         match command.as_str() {
-            "exit" => {
+            EXIT => {
                 trace(format!("Exit application mode request detected."));
                 break;
             },

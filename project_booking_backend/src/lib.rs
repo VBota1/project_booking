@@ -14,6 +14,18 @@ use formaters::AsHHMMSS;
 //TODO LOW PRIO import tasks from Jira
 //TODO LOW PRIO export tasks to PTT
 
+const NEW: &'static str = "new";
+const CLOCKIN: &'static str = "clockIn";
+const CLOCKOUT: &'static str = "clockOut";
+const REPORT: &'static str = "report";
+const REPORTBYLABEL: &'static str = "reportByLabel";
+const ADDTIME: &'static str = "addTime";
+const DELETE: &'static str = "delete";
+const HELP: &'static str = "help";
+const LICENSE: &'static str = "license";
+pub const APPLICATIONMODE: &'static str = "applicationMode";
+pub const EXIT: &'static str = "exit";
+
 pub struct Response {
     pub message: String,
     pub should_save: bool,
@@ -37,43 +49,41 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
     match args.nth(0) {
         Some(command) => {
             match command.as_str() {
-                "new" => {
+                NEW => {
                     trace(format!("New task request detected"));
                     Response { message: create_new_task_from_arguments(args, to_do).to_string(), should_save: true }
                 },
-                "clockIn" => {
+                CLOCKIN => {
                     trace(format!("Clock in request detected"));
                     Response { message: clock_in(args, to_do).to_string(), should_save: true }
                 },
-                "clockOut" => {
+                CLOCKOUT => {
                     trace(format!("Clock out request detected"));
                     Response { message: clock_out(args, to_do).to_string(), should_save: true }
                 },
-                "report" => {
+                REPORT => {
                     trace(format!("Report request detected"));
                     Response { message: report(to_do).to_string(), should_save: false }
                 },
-                "reportByLabel" => {
+                REPORTBYLABEL => {
                     trace(format!("Report time spent on labels request detected"));
                     Response { message: report_time_on_labels(to_do).to_string(), should_save: false }
                 },
-                "addTime" => {
+                ADDTIME => {
                     trace(format!("Add time request detected"));
                     Response { message: add_time(args, to_do).to_string(), should_save: true }
                 }
-                "delete" => {
+                DELETE => {
                     trace(format!("Delete request detected"));
                     Response { message: delete(args, to_do).to_string(), should_save: false }
                 }
-                "help" => {
+                HELP => {
                     trace(format!("Help request detected"));
-                    //TODO HIGH PRIO return help information
-                    Response { message: warn(format!("help command not implemented")), should_save: false }
+                    Response { message: help(), should_save: false }
                 },
-                "license" => {
+                LICENSE => {
                     trace(format!("License request detected"));
-                    //TODO HIGH PRIO return license information
-                    Response { message: warn(format!("license command not implemented")), should_save: false }
+                    Response { message: license(), should_save: false }
                 },
                 _ => {
                     Response { message: warn(format!("Unknown command \"{}\". {}", command, recommend_help())), should_save: false }
@@ -86,6 +96,37 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
     }
 }
 
+fn help() -> String {
+    format!("Version 015012000
+Service mode usage: ./project_booking_cli command [task][labels][time]
+Application mode usage: command [task][labels][time]
+  Supported commands:
+\t{0: <18} Creates a new task. Can be folowed by multiple labels.
+\t{1: <18} Starts to monitor time for the indicated task. Must be followed by a task name.
+\t{2: <18} Stops to monitor time for the indicated task and adds the duration between this event and clockIn event to the task. Must be followed by a task name.
+\t{3: <18} Prints out a report of all the recorded tasks.
+\t{4: <18} Prints out a report of all the duration spend on each label.
+\t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm .
+\t{6: <18} Removes the specified task from the recordings. Must be followed by a task name.
+\t{7: <18} Prints out this help text.
+\t{8: <18} Prints out License information.
+\t{9: <18} Enters application mode. Changes made in application mode are saved to nonvolatile storage upon calling command {10}.
+\t{10: <18} Exits application mode after saving all changes made to nonvolatile storage. Will return an error if called outside application mode.
+  Examples:
+\t./project_booking_cli {0} task510 Project1 Project2
+\t./project_booking_cli {1} task510
+\t./project_booking_cli {3}
+\t./project_booking_cli {2} task510
+\t./project_booking_cli {4}
+\t./project_booking_cli {5} task510 01:01
+\t./project_booking_cli {6}
+\t./project_booking_cli {7}
+\t./project_booking_cli {8}
+\t./project_booking_cli {9}
+\t{10}
+    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT)
+}
+
 fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
@@ -96,7 +137,10 @@ fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
         },
     };
 
-    to_do.remove_task(task_name)
+    match to_do.remove_task(task_name) {
+        Ok(message) => { Ok(trace(message)) },
+        Err(message) => { Err(error(message)) },
+    }
 }
 
 fn report(to_do: &ToDo) -> Result<String, String> {
@@ -252,6 +296,63 @@ impl ToString for Result<String, String>
             Err(message) => message.clone(),
         }
     }
+}
+
+fn license() -> String {
+    format!("
+MIT License \n
+Copyright (c) 2018 V Bota \n
+Permission is hereby granted, free of charge, to any person obtaining a copy \n
+of this software and associated documentation files (the \"Software\"), to deal \n
+in the Software without restriction, including without limitation the rights \n
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell \n
+copies of the Software, and to permit persons to whom the Software is \n
+furnished to do so, subject to the following conditions: \n
+The above copyright notice and this permission notice shall be included in all \n
+copies or substantial portions of the Software. \n
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR \n
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, \n
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE \n
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER \n
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, \n
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE \n
+SOFTWARE. \n
+\n
+\n
+3\'rd party LICENSES: \n
+\n
+LICENSE for extern crate simple_logging: \n
+Copyright 2017 Isabela Schulze \n
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: \n
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. \n
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. \n
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. \n
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. \n
+\n
+LICENSE for extern crates serde, serde_json and serde_derive: \n
+Copyright (c) 2014 The Rust Project Developers \n
+Permission is hereby granted, free of charge, to any \n
+person obtaining a copy of this software and associated \n
+documentation files (the \"Software\"), to deal in the \n
+Software without restriction, including without \n
+limitation the rights to use, copy, modify, merge, \n
+publish, distribute, sublicense, and/or sell copies of \n
+the Software, and to permit persons to whom the Software \n
+is furnished to do so, subject to the following \n
+conditions: \n
+The above copyright notice and this permission notice \n
+shall be included in all copies or substantial portions \n
+of the Software. \n
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF \n
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED \n
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A \n
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT \n
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY \n
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION \n
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR \n
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER \n
+DEALINGS IN THE SOFTWARE. \n
+    ")
 }
 
 #[cfg(test)]

@@ -213,15 +213,3 @@ fn delete_task() {
 
     assert!(todo.count() == 1, "Expected numer of Tasks 1. Actual {}", todo.count());
 }
-
-/*
-#[test]
-TODO add fn help() {
-    assert!(false, "Test for Help to be implemented!");
-}
-
-#[test]
-TODO add fn license() {
-    assert!(false, "Test for License to be implemented!");
-}
-*/
