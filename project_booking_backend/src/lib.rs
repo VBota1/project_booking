@@ -285,58 +285,58 @@ impl ToString for Result<String, String>
 
 fn license() -> String {
     format!("
-MIT License \n
-Copyright (c) 2018 V Bota \n
-Permission is hereby granted, free of charge, to any person obtaining a copy \n
-of this software and associated documentation files (the \"Software\"), to deal \n
-in the Software without restriction, including without limitation the rights \n
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell \n
-copies of the Software, and to permit persons to whom the Software is \n
-furnished to do so, subject to the following conditions: \n
-The above copyright notice and this permission notice shall be included in all \n
-copies or substantial portions of the Software. \n
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR \n
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, \n
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE \n
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER \n
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, \n
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE \n
-SOFTWARE. \n
-\n
-\n
-3\'rd party LICENSES: \n
-\n
-LICENSE for extern crate simple_logging: \n
-Copyright 2017 Isabela Schulze \n
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: \n
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. \n
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. \n
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. \n
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. \n
-\n
-LICENSE for extern crates serde, serde_json and serde_derive: \n
-Copyright (c) 2014 The Rust Project Developers \n
-Permission is hereby granted, free of charge, to any \n
-person obtaining a copy of this software and associated \n
-documentation files (the \"Software\"), to deal in the \n
-Software without restriction, including without \n
-limitation the rights to use, copy, modify, merge, \n
-publish, distribute, sublicense, and/or sell copies of \n
-the Software, and to permit persons to whom the Software \n
-is furnished to do so, subject to the following \n
-conditions: \n
-The above copyright notice and this permission notice \n
-shall be included in all copies or substantial portions \n
-of the Software. \n
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF \n
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED \n
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A \n
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT \n
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY \n
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION \n
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR \n
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER \n
-DEALINGS IN THE SOFTWARE. \n
+MIT License
+Copyright (c) 2018 V Bota
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the \"Software\"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+3\'rd party LICENSES:
+
+BSD 3 Clause LICENSE for extern crate simple_logging:
+Copyright 2017 Isabela Schulze
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+MIT LICENSE for extern crates serde, serde_json and serde_derive:
+Copyright (c) 2014 The Rust Project Developers
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the \"Software\"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
     ")
 }
 
