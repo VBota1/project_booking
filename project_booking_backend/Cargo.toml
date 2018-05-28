@@ -1,6 +1,6 @@
 [package]
 name = "project_booking_backend"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Viorel Bota <botaviorel@gmail.com>"]
 
 [dependencies]

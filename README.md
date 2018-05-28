@@ -9,7 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 015012000**
+**Version: 016012000**
 
 **Implemented:**
 ```

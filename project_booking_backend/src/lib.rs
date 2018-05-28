@@ -97,7 +97,7 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
 }
 
 fn help() -> String {
-    format!("Version 015012000
+    format!("Version 016012000
 Service mode usage: ./project_booking_cli command [task][labels][time]
 Application mode usage: command [task][labels][time]
   Supported commands:
@@ -137,10 +137,7 @@ fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
         },
     };
 
-    match to_do.remove_task(task_name) {
-        Ok(message) => { Ok(trace(message)) },
-        Err(message) => { Err(error(message)) },
-    }
+    to_do.remove_task(task_name).log_result()
 }
 
 fn report(to_do: &ToDo) -> Result<String, String> {
@@ -164,10 +161,7 @@ fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String>
 
     match args.nth(0) {
         Some(task_name) => {
-            match to_do.clock_out(task_name.to_string()) {
-                Ok(message) => { Ok(trace(message)) },
-                Err(message) => { Err(error(message)) }
-            }
+            to_do.clock_out(task_name.to_string()).log_result()
         },
         None => {
             Err(warn(format!("Please supply a valid task name for the clock out operation. {}", recommend_help())))
@@ -180,10 +174,7 @@ fn clock_in(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> 
 
     match args.nth(0) {
         Some(task_name) => {
-            match to_do.clock_in(task_name.to_string()) {
-                Ok(message) => { Ok(trace(message)) },
-                Err(message) => { Err(error(message)) }
-            }
+            to_do.clock_in(task_name.to_string()).log_result()
         },
         None => {
             Err(warn(format!("Please supply a valid task name for the clock in operation. {}", recommend_help())))
@@ -195,10 +186,7 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
     match args.nth(0) {
         Some(task) => {
             let labels: Vec<String> = args.cloned().collect();
-            match to_do.add(task.clone(), labels) {
-                Ok(message) => { Ok(trace(message)) },
-                Err(message) => { Err(error(message)) },
-            }
+            to_do.add(task.clone(), labels).log_result()
         },
         None => {
             Err(warn(format!("No task name received. \"{}\"", recommend_help())))
@@ -259,10 +247,7 @@ pub fn store(to_do: ToDo) -> Result<String, String> {
 }
 
 fn forced_store(to_do: ToDo) -> Result<String, String> {
-    match to_do.save(None) {
-        Ok(message) => { Ok(trace(message)) }
-        Err(message) => { Err(error(message)) }
-    }
+    to_do.save(None).log_result()
 }
 
 pub fn get_to_do(load_file: Option<String>) -> ToDo {

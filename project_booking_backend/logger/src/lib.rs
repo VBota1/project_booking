@@ -49,6 +49,18 @@ pub fn trace(message: String) -> String {
     message
 }
 
+pub trait LogResultStringString {
+    fn log_result(self) -> Result<String, String>;
+}
+
+impl LogResultStringString for Result<String, String> {
+    fn log_result(self) -> Result<String, String> {
+        match self {
+            Ok(message) => Ok(trace(message)),
+            Err(message) => Err(error(message))
+        }
+    }
+}
 
 /*LICENSE for extern crate simple_logging
 Copyright 2017 Isabela Schulze
