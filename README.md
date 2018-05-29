@@ -30,7 +30,7 @@ A Task is defeind by:
 
 **Usage Examples**
 ```
-    ./project_booking_cli new task510 Project1 Project2
+    	./project_booking_cli new task510 Project1 Project2
 	./project_booking_cli clockIn task510
 	./project_booking_cli report
 	./project_booking_cli clockOut task510
@@ -50,7 +50,7 @@ A Task is defeind by:
 **To be Done:**
 ```
     implment QT Gui
-    create a new database at the start of each month
+    implement a command to rename old database and create a new one
     import tasks from Jira
 ``` 
   
