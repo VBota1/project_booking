@@ -49,8 +49,9 @@ A Task is defeind by:
   
 **To be Done:**
 ```
-    implment QT Gui
-    implement a command to rename old database and create a new one
-    import tasks from Jira
+	on request report acitivity for each day (task -> hours) or ( label -> hours)
+    	implment QT Gui
+    	implement a command to rename old database and create a new one
+    	import tasks from Jira
 ``` 
   
