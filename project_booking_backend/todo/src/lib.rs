@@ -1,6 +1,7 @@
 extern crate identifiers;
 extern crate task;
 extern crate formaters;
+extern crate chrono;
 
 use identifiers::UniqueIdentifier;
 use task::Task;
@@ -9,6 +10,7 @@ use std::io::Write;
 use std::collections::HashMap;
 use std::time::Duration;
 use formaters::AsHHMMSS;
+use chrono::NaiveDate;
 
 #[macro_use]
 extern crate serde_derive;
@@ -46,6 +48,8 @@ impl ToDo {
         }
         output
     }
+
+    //TODO create monthly_activity_report(month)
 
     pub fn report_time_spent_on_labels(&self) -> Vec<Vec<String>> {
         let mut time_on_labels = HashMap::new();
@@ -114,9 +118,9 @@ impl ToDo {
         self.list.len()
     }
 
-    pub fn add_time_spent_to_task(&mut self, task_name: String, time: Duration) -> Result<Duration, String> {
+    pub fn add_time_spent_to_task(&mut self, task_name: String, date_to_add_time: Option<NaiveDate>, time: Duration) -> Result<Duration, String> {
         let index = self.list.index_of_task_by_name(task_name)?;
-        Ok(self.list.get_mut(index).unwrap().add_time_spent(time))
+        Ok(self.list.get_mut(index).unwrap().add_time_spent(date_to_add_time, time))
     }
 
     pub fn remove_task(&mut self, task_name: String) -> Result<String, String> {

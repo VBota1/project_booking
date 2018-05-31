@@ -30,12 +30,13 @@ A Task is defeind by:
 
 **Usage Examples**
 ```
-    	./project_booking_cli new task510 Project1 Project2
+        ./project_booking_cli new task510 Project1 Project2
 	./project_booking_cli clockIn task510
 	./project_booking_cli report
 	./project_booking_cli clockOut task510
 	./project_booking_cli reportByLabel
 	./project_booking_cli addTime task510 01:01
+	./project_booking_cli addTime task510 01:01 31.05.2021
 	./project_booking_cli delete
 	./project_booking_cli help
 	./project_booking_cli license

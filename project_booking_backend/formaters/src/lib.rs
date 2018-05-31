@@ -1,4 +1,21 @@
 use std::time::Duration;
+use chrono::NaiveDate;
+
+extern crate chrono;
+
+pub trait AsDMY {
+    fn as_dmy(&self) -> String;
+}
+
+impl AsDMY for NaiveDate {
+    fn as_dmy(&self) -> String {
+        self.format(dmy_format().as_str()).to_string()
+    }
+}
+
+pub fn dmy_format() -> String {
+    format!("%d.%m.%y")
+}
 
 pub trait AsHHMMSS {
     fn as_hhmmss(&self) -> String;

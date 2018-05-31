@@ -1,8 +1,11 @@
 use std::time::{Duration, SystemTime};
-use formaters::AsHHMMSS;
+use formaters::*;
+use std::collections::HashMap;
+use chrono::{NaiveDate, Datelike, Local};
 
 extern crate search;
 extern crate formaters;
+extern crate chrono;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -12,14 +15,14 @@ extern crate serde_json;
 pub struct Task {
     _id: i32,
     _name: String,
-    _time_spent: Duration,
+    _time_spent: HashMap<String, Duration>,
     _labels: Vec<String>,
     _clock_in_timestamp: Option<SystemTime>,
 }
 
 impl Task {
     pub fn new(uid: i32, p_name: String, p_labels: Vec<String>) -> Task {
-        Task { _id: uid, _name: p_name, _labels: p_labels, _time_spent: Duration::new(0, 0), _clock_in_timestamp: None }
+        Task { _id: uid, _name: p_name, _labels: p_labels, _time_spent: HashMap::new(), _clock_in_timestamp: None }
     }
 
     pub fn as_vec_string (&self) -> Vec<String> {
@@ -29,7 +32,7 @@ impl Task {
 
         output.push(format!("{}",self._name));
 
-        output.push(format!("{}", self._time_spent.as_hhmmss()));
+        output.push(format!("{}", self.time_spent().as_hhmmss()));
 
         match self._clock_in_timestamp {
             Some(timestamp) => {
@@ -58,7 +61,7 @@ impl Task {
             Some(time) => {
                 match time.elapsed() {
                     Ok(duration) => {
-                        self._time_spent += duration;
+                        self.add_time_spent(None, duration);
                         self._clock_in_timestamp = None;
                         Ok(format!("Successfully clocked out of \"{}\"", self.name()))
                     },
@@ -86,16 +89,24 @@ impl Task {
     }
 
     pub fn time_spent(&self) -> Duration {
-        self._time_spent.clone()
+        self._time_spent.values().fold(Duration::new(0, 0), |acc, x| acc + x.clone())
     }
 
-    pub fn add_time_spent(&mut self, time: Duration) -> Duration {
-        self._time_spent += time;
-        self.time_spent()
+    pub fn add_time_spent(&mut self, date_to_add_time: Option<NaiveDate>, time: Duration) -> Duration {
+        let date_for_duration = match date_to_add_time {
+            Some(date) => date,
+            None => {
+                let date_time = Local::now().naive_local();
+                NaiveDate::from_ymd(date_time.year(), date_time.month(), date_time.day())
+            }
+        };
+        let value = self._time_spent.entry(date_for_duration.as_dmy()).or_insert(Duration::new(0, 0));
+        *value += time;
+        value.clone()
     }
 }
 
-/*LICENSE for extern crates serde, serde_json and serde_derive:
+/*MIT LICENSE for extern crates serde, serde_json and serde_derive:
 Copyright (c) 2014 The Rust Project Developers
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -118,4 +129,23 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+MIT LICENSE for extern crate chrono
+The MIT License (MIT)
+Copyright (c) 2014, Kang Seonghoon.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 */

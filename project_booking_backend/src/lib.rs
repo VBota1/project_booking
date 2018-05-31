@@ -1,13 +1,16 @@
 extern crate todo;
 extern crate formaters;
 extern crate logger;
+extern crate chrono;
 
 use todo::*;
 use logger::*;
 use formaters::AsString;
+use formaters::dmy_format;
 use std::slice::Iter;
 use std::time::Duration;
 use formaters::AsHHMMSS;
+use chrono::NaiveDate;
 
 //TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
@@ -101,12 +104,12 @@ fn help() -> String {
 Service mode usage: ./project_booking_cli command [task][labels][time]
 Application mode usage: command [task][labels][time]
   Supported commands:
-\t{0: <18} Creates a new task. Can be folowed by multiple labels.
+\t{0: <18} Creates a new task. Can be followed by multiple labels.
 \t{1: <18} Starts to monitor time for the indicated task. Must be followed by a task name.
 \t{2: <18} Stops to monitor time for the indicated task and adds the duration between this event and clockIn event to the task. Must be followed by a task name.
 \t{3: <18} Prints out a report of all the recorded tasks.
 \t{4: <18} Prints out a report of all the duration spend on each label.
-\t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm .
+\t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm . Can be followed by the date for which to add the time. The date must be in the format d.m.y .
 \t{6: <18} Removes the specified task from the recordings. Must be followed by a task name.
 \t{7: <18} Prints out this help text.
 \t{8: <18} Prints out License information.
@@ -119,6 +122,7 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {2} task510
 \t./project_booking_cli {4}
 \t./project_booking_cli {5} task510 01:01
+\t./project_booking_cli {5} task510 01:01 31.05.2021
 \t./project_booking_cli {6}
 \t./project_booking_cli {7}
 \t./project_booking_cli {8}
@@ -235,8 +239,23 @@ fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> 
         }
     };
 
+    let date: Option<NaiveDate> = match args.nth(0) {
+        Some(date_argument) => {
+            match NaiveDate::parse_from_str(date_argument, dmy_format().as_str()) {
+                Ok(result) => { Some(result) },
+                Err(_) => {
+                    return Err(warn(format!("Date for which to add time, \"{}\" ,is not in the expected format. \"{}\"", date_argument, recommend_help())));
+                }
+            }
+        }
+        None => {
+            warn(format!("No date for which to add time was received. Current date will be used"));
+            None
+        }
+    };
+
     let secs = (hours * 3600 + minutes * 60) as u64;
-    let new_time = to_do.add_time_spent_to_task(task_name.clone(), Duration::new(secs, 0))?;
+    let new_time = to_do.add_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))?;
     Ok(trace(format!("Time spent on task \"{}\" is now \"{}\"", task_name, new_time.as_hhmmss())))
 }
 
@@ -337,6 +356,25 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+MIT LICENSE for extern crate chrono
+The MIT License (MIT)
+Copyright (c) 2014, Kang Seonghoon.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the \"Software\"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
     ")
 }
 

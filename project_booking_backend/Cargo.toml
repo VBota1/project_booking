@@ -1,9 +1,10 @@
 [package]
 name = "project_booking_backend"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Viorel Bota <botaviorel@gmail.com>"]
 
 [dependencies]
 todo = { path = "todo" }
 logger = { path = "logger" }
 formaters = { path = "formaters" }
+chrono = "0.4"
