@@ -10,7 +10,8 @@ use std::io::Write;
 use std::collections::HashMap;
 use std::time::Duration;
 use formaters::AsHHMMSS;
-use chrono::NaiveDate;
+use formaters::dmy_format;
+use chrono::{NaiveDate, Datelike};
 
 #[macro_use]
 extern crate serde_derive;
@@ -40,23 +41,47 @@ impl ToDo {
         }
     }
 
-    pub fn to_report(&self) -> Vec<Vec<String>> {
+    pub fn to_report(&self) -> Vec<String> {
         let mut output = Vec::new();
         let tasklist = self.list.as_slice();
         for t in tasklist {
-            output.push(t.as_vec_string());
+            output.push(t.as_vec_string().join(" "));
         }
         output
     }
 
-    //TODO create monthly_activity_report(month)
+    pub fn report_daily_activity_for_month(&self, month_to_report: u32) -> HashMap<String, Vec<String>> {
+        let mut report = self.report_daily_activity();
+        report.retain(|date, _|
+            match NaiveDate::parse_from_str(date, dmy_format().as_str()) {
+                Ok(date) => { date.month() == month_to_report },
+                Err(_) => { false }
+            }
+        );
+        report
+    }
 
-    pub fn report_time_spent_on_labels(&self) -> Vec<Vec<String>> {
+    fn report_daily_activity(&self) -> HashMap<String, Vec<String>> {
+        let mut task_durations_on_day: HashMap<String, Vec<String>> = HashMap::new();
+
+        let tasklist = self.list.as_slice();
+        for t in tasklist {
+            let time_records = t.time_spent();
+            for (date, task_duration) in time_records {
+                let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
+                task_info.push(format!("{} {}", t.name(), task_duration.as_hhmmss()));
+            }
+        }
+
+        task_durations_on_day
+    }
+
+    pub fn report_time_spent_on_labels(&self) -> Vec<String> {
         let mut time_on_labels = HashMap::new();
 
         let tasklist = self.list.as_slice();
         for t in tasklist {
-            let time_per_label = t.time_spent().checked_div(t.labels().len() as u32).unwrap_or(t.time_spent());
+            let time_per_label = t.total_time_spent().checked_div(t.labels().len() as u32).unwrap_or(t.total_time_spent());
 
             let labels = t.labels();
             for l in labels {
@@ -65,12 +90,7 @@ impl ToDo {
             }
         }
 
-        let mut result: Vec<Vec<String>> = Vec::new();
-        for (label, time) in time_on_labels {
-            let mut line: Vec<String> = vec![label, time.as_hhmmss()];
-            result.push(line);
-        }
-        result
+        time_on_labels.iter().map(|(label, time)| format!("{} {}", label, time.as_hhmmss())).collect()
     }
 
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {

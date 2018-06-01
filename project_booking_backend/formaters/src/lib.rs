@@ -35,13 +35,13 @@ pub trait AsString {
     fn as_string(&self) -> String;
 }
 
-impl AsString for Vec<Vec<String>> {
-    fn as_string(&self) -> String {
-        let mut lines: Vec<String> = Vec::new();
-        for task in self {
-            lines.push(task.join(" "));
+impl AsString for Result<String, String>
+{
+    fn as_string(&self) -> String
+    {
+        match self {
+            Ok(message) => message.clone(),
+            Err(message) => message.clone(),
         }
-
-        lines.join("\n")
     }
 }

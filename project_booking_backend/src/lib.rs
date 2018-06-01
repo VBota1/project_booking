@@ -22,6 +22,7 @@ const CLOCKIN: &'static str = "clockIn";
 const CLOCKOUT: &'static str = "clockOut";
 const REPORT: &'static str = "report";
 const REPORTBYLABEL: &'static str = "reportByLabel";
+const REPORTBYDAY: &'static str = "reportByDay";
 const ADDTIME: &'static str = "addTime";
 const DELETE: &'static str = "delete";
 const HELP: &'static str = "help";
@@ -54,31 +55,35 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
             match command.as_str() {
                 NEW => {
                     trace(format!("New task request detected"));
-                    Response { message: create_new_task_from_arguments(args, to_do).to_string(), should_save: true }
+                    Response { message: create_new_task_from_arguments(args, to_do).as_string(), should_save: true }
                 },
                 CLOCKIN => {
                     trace(format!("Clock in request detected"));
-                    Response { message: clock_in(args, to_do).to_string(), should_save: true }
+                    Response { message: clock_in(args, to_do).as_string(), should_save: true }
                 },
                 CLOCKOUT => {
                     trace(format!("Clock out request detected"));
-                    Response { message: clock_out(args, to_do).to_string(), should_save: true }
+                    Response { message: clock_out(args, to_do).as_string(), should_save: true }
                 },
                 REPORT => {
                     trace(format!("Report request detected"));
-                    Response { message: report(to_do).to_string(), should_save: false }
+                    Response { message: report(to_do).as_string(), should_save: false }
                 },
                 REPORTBYLABEL => {
                     trace(format!("Report time spent on labels request detected"));
-                    Response { message: report_time_on_labels(to_do).to_string(), should_save: false }
+                    Response { message: report_time_on_labels(to_do).as_string(), should_save: false }
+                },
+                REPORTBYDAY => {
+                    trace(format!("Daily activity report request detected"));
+                    Response { message: daily_activity_report(args, to_do).as_string(), should_save: false }
                 },
                 ADDTIME => {
                     trace(format!("Add time request detected"));
-                    Response { message: add_time(args, to_do).to_string(), should_save: true }
+                    Response { message: add_time(args, to_do).as_string(), should_save: true }
                 }
                 DELETE => {
                     trace(format!("Delete request detected"));
-                    Response { message: delete(args, to_do).to_string(), should_save: false }
+                    Response { message: delete(args, to_do).as_string(), should_save: false }
                 }
                 HELP => {
                     trace(format!("Help request detected"));
@@ -109,6 +114,7 @@ Application mode usage: command [task][labels][time]
 \t{2: <18} Stops to monitor time for the indicated task and adds the duration between this event and clockIn event to the task. Must be followed by a task name.
 \t{3: <18} Prints out a report of all the recorded tasks.
 \t{4: <18} Prints out a report of all the duration spend on each label.
+\t{11: <18} Prints out a report of the time spent on each task of each day of the specified month. Must be followed by a month argument; example 5 for May.
 \t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm . Can be followed by the date for which to add the time. The date must be in the format d.m.y .
 \t{6: <18} Removes the specified task from the recordings. Must be followed by a task name.
 \t{7: <18} Prints out this help text.
@@ -121,6 +127,7 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {3}
 \t./project_booking_cli {2} task510
 \t./project_booking_cli {4}
+\t./project_booking_cli {11} 5
 \t./project_booking_cli {5} task510 01:01
 \t./project_booking_cli {5} task510 01:01 31.05.2021
 \t./project_booking_cli {6}
@@ -128,7 +135,7 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {8}
 \t./project_booking_cli {9}
 \t{10}
-    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT)
+    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTBYDAY)
 }
 
 fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
@@ -147,13 +154,39 @@ fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
 fn report(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
-    Ok(to_do.to_report().as_string())
+    Ok(to_do.to_report().join("\n"))
 }
 
 fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
-    Ok(to_do.report_time_spent_on_labels().as_string())
+    Ok(to_do.report_time_spent_on_labels().join("\n"))
+}
+
+//TODO add test for daily_activity_report
+fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String, String> {
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
+
+    let month = match args.nth(0) {
+        Some(value) => {
+            match value.parse::<u32>() {
+                Ok(value) => { value },
+                Err(_) => {
+                    return Err(warn(format!("Month argument \"{}\" could not be parsed as u32", value)));
+                }
+            }
+        },
+        None => {
+            return Err(warn(format!("Month argument is missing. {}", recommend_help())));
+        }
+    };
+
+    let mut days = Vec::new();
+    for (date, task_info) in to_do.report_daily_activity_for_month(month) {
+        days.push(format!("{}\n{}", date, task_info.join("\n")))
+    }
+
+    Ok(days.join("\n\n"))
 }
 
 fn no_tasks_recorderd_message() -> String {
@@ -284,22 +317,6 @@ pub fn get_to_do(load_file: Option<String>) -> ToDo {
 
 fn recommend_help() -> String {
     format!("Call \"project_booking help\" for additional information.")
-}
-
-pub trait ToString
-{
-    fn to_string(&self) -> String;
-}
-
-impl ToString for Result<String, String>
-{
-    fn to_string(&self) -> String
-    {
-        match self {
-            Ok(message) => message.clone(),
-            Err(message) => message.clone(),
-        }
-    }
 }
 
 fn license() -> String {

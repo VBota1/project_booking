@@ -32,7 +32,7 @@ impl Task {
 
         output.push(format!("{}",self._name));
 
-        output.push(format!("{}", self.time_spent().as_hhmmss()));
+        output.push(format!("{}", self.total_time_spent().as_hhmmss()));
 
         match self._clock_in_timestamp {
             Some(timestamp) => {
@@ -88,8 +88,12 @@ impl Task {
         self._labels.to_vec()
     }
 
-    pub fn time_spent(&self) -> Duration {
+    pub fn total_time_spent(&self) -> Duration {
         self._time_spent.values().fold(Duration::new(0, 0), |acc, x| acc + x.clone())
+    }
+
+    pub fn time_spent(&self) -> HashMap<String, Duration> {
+        self._time_spent.clone()
     }
 
     pub fn add_time_spent(&mut self, date_to_add_time: Option<NaiveDate>, time: Duration) -> Duration {
