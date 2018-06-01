@@ -14,7 +14,7 @@ impl AsDMY for NaiveDate {
 }
 
 pub fn dmy_format() -> String {
-    format!("%d.%m.%y")
+    format!("%d.%m.%Y")
 }
 
 pub trait AsHHMMSS {

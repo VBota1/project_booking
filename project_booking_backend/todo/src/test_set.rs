@@ -2,22 +2,21 @@ use super::ToDo;
 use super::load;
 use std::time::Duration;
 use std::thread::sleep;
-use super::formaters::AsHHMMSS;
+use formaters::AsHHMMSS;
 
 #[test]
 fn id_is_unique () {
     let mut todo = ToDo::new();
     todo.add(format!("task1"), Vec::new());
-    todo.add(format!("task1"), Vec::new());
-    todo.add(format!("task1"), Vec::new());
-    todo.add(format!("task1"), Vec::new());
+    todo.add(format!("task2"), Vec::new());
+    todo.add(format!("task3"), Vec::new());
+    todo.add(format!("task4"), Vec::new());
 
     let mut task_count =0;
     for mut t in todo.to_report() {
         task_count +=1;
-        let actual_id = t.remove(0);
-        let expected_id = format!("{}",task_count);
-        assert!(actual_id==expected_id,format!("Actual id {} Expected id {}",actual_id,expected_id));
+        let expected = format!("{0} task{0} 00:00:00 None", task_count);
+        assert!(t == expected, format!("Actual {} Expected {}", t, expected));
     }
 }
 
@@ -56,18 +55,11 @@ fn retrieve_from_storage() {
     };
 
     match load(None) {
-        Ok(mut reterived_data) => {
-            let mut actual_task_name: String = format!("");
-
+        Ok(reterived_data) => {
             if let Some(task) = reterived_data.to_report().get(0) {
-                match task.get(1) {
-                    Some(task_name) => { actual_task_name = task_name.clone().to_string() },
-                    _ => { assert!(false, "Task name could not be retrieved from the loaded data."); }
-                }
-
+                let expected = format!("1 {} 00:00:00 None", task_name.clone());
+                assert!(task.clone() == expected, format!("Actual {} Expected {}", task, expected));
             } else { assert!(false, "No task could not be retrieved from the loaded data."); }
-
-            assert!(task_name==actual_task_name,format!("Expected first task named {} actual name {}",task_name,actual_task_name));
         },
         Err(message) => {
             assert!(false,"{}",message);
@@ -86,7 +78,7 @@ fn reject_new_task_with_same_name () {
 
     match  todo.add(task_name.clone(), Vec::new()) {
         Ok(_) => { assert!(false,format!("Adding 2 tasks with name {} was possible",task_name)); },
-        Err(message) => { assert!(true,format!("Adding another tasks with name {} was rejected",task_name)); },
+        Err(_) => { assert!(true, format!("Adding another tasks with name {} was rejected", task_name)); },
     };
 }
 
@@ -98,23 +90,15 @@ fn measure_time_spent_on_task() {
     let actual_time_spent_on_task = Duration::new(5, 0);
     todo.clock_in(task_name.clone());
     sleep(actual_time_spent_on_task);
-    match todo.clock_out(task_name) {
+    match todo.clock_out(task_name.clone()) {
         Ok(_) => {}
         Err(message) => { assert!(false, message); }
     }
 
-    let mut recorded_time_spent_on_task = format!("{:?}", Duration::new(0, 0));
     if let Some(task) = todo.to_report().get(0) {
-        match task.get(2) {
-            Some(duration) => { recorded_time_spent_on_task = duration.to_string(); },
-            _ => {
-                assert!(false, "Task duration could not be retrieved.");
-            },
-        };
+        let expected = format!("1 {} 00:00:05 None", task_name.clone());
+        assert!(task.clone() == expected, format!("Actual {} Expected {}", task, expected));
     } else { assert!(false, "No task could not be retrieved from the loaded data."); }
-
-    let actual_time_spent_on_task = format!("{}", actual_time_spent_on_task.as_hhmmss());
-    assert!(actual_time_spent_on_task == recorded_time_spent_on_task, format!("Expected duration {} measured duration {}", actual_time_spent_on_task, recorded_time_spent_on_task));
 }
 
 #[test]
@@ -137,7 +121,7 @@ fn load_data_after_clock_out() {
     todo.save(None);
 
     match load(None) {
-        Ok(todo) => {
+        Ok(_) => {
             assert!(true, "Loaded data successfully after clockOut and save performed.");
         },
         Err(error) => {
@@ -176,8 +160,9 @@ fn report_time_by_label() {
     let actual_report = todo.report_time_spent_on_labels();
 
     for line in actual_report {
-        let label_name = format!("{}", line.get(0).unwrap());
-        let time_spent = format!("{}", line.get(1).unwrap());
+        let mut line_vector: Vec<String> = line.clone().split_whitespace().map(|s| format!("{}", s)).collect();
+        let label_name = line_vector.remove(0);
+        let time_spent = line_vector.remove(0);
         if label_name == label1 {
             let expected = Duration::new(9, 0).as_hhmmss();
             assert!(time_spent == expected, "Label {} Actual {} Expected {}", label1, time_spent, expected);

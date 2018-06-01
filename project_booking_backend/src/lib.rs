@@ -12,7 +12,6 @@ use std::time::Duration;
 use formaters::AsHHMMSS;
 use chrono::NaiveDate;
 
-//TODO MEDIUM PRIO new database at the start of each month
 //TODO MEDIUM PRIO GUI (QT)
 //TODO LOW PRIO import tasks from Jira
 //TODO LOW PRIO export tasks to PTT
@@ -114,8 +113,8 @@ Application mode usage: command [task][labels][time]
 \t{2: <18} Stops to monitor time for the indicated task and adds the duration between this event and clockIn event to the task. Must be followed by a task name.
 \t{3: <18} Prints out a report of all the recorded tasks.
 \t{4: <18} Prints out a report of all the duration spend on each label.
-\t{11: <18} Prints out a report of the time spent on each task of each day of the specified month. Must be followed by a month argument; example 5 for May.
-\t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm . Can be followed by the date for which to add the time. The date must be in the format d.m.y .
+\t{11: <18} Prints out a report of the time spent on each task of each day of the specified month. Must be followed by a month argument: example 05 for May.
+\t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm . Can be followed by the date for which to add the time. The date must be in the format dd.mm.yyyy .
 \t{6: <18} Removes the specified task from the recordings. Must be followed by a task name.
 \t{7: <18} Prints out this help text.
 \t{8: <18} Prints out License information.
@@ -163,7 +162,6 @@ fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
     Ok(to_do.report_time_spent_on_labels().join("\n"))
 }
 
-//TODO add test for daily_activity_report
 fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
