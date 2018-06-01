@@ -1,5 +1,5 @@
 # project_booking
-Traking time on projects/tasks
+Tracking time on projects/tasks
 
 A ToDo is a list of Tasks.  
 A Task is defeind by:
@@ -9,7 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 016012000**
+**Version: 017012000**
 
 **Implemented:**
 ```
@@ -21,6 +21,7 @@ A Task is defeind by:
     CLI interface
     Report by Task
     Report by Label
+    Daily activity report
     Add Time to Task
     Remove Task
     Help
@@ -30,18 +31,18 @@ A Task is defeind by:
 
 **Usage Examples**
 ```
-        ./project_booking_cli new task510 Project1 Project2
-	./project_booking_cli clockIn task510
-	./project_booking_cli report
-	./project_booking_cli clockOut task510
-	./project_booking_cli reportByLabel
-	./project_booking_cli addTime task510 01:01
-	./project_booking_cli addTime task510 01:01 31.05.2021
-	./project_booking_cli delete
-	./project_booking_cli help
-	./project_booking_cli license
-	./project_booking_cli applicationMode
-	exit
+    ./project_booking_cli new task510 Project1 Project2
+    ./project_booking_cli clockIn task510
+    ./project_booking_cli report
+    ./project_booking_cli clockOut task510
+    ./project_booking_cli reportByLabel
+    ./project_booking_cli addTime task510 01:01
+    ./project_booking_cli addTime task510 01:01 31.05.2021
+    ./project_booking_cli delete
+    ./project_booking_cli help
+    ./project_booking_cli license
+    ./project_booking_cli applicationMode
+    exit
 ```
 **Known issues:**
 ```
@@ -50,9 +51,7 @@ A Task is defeind by:
   
 **To be Done:**
 ```
-	on request report acitivity for each day (task -> hours) or ( label -> hours)
-    	implment QT Gui
-    	implement a command to rename old database and create a new one
-    	import tasks from Jira
+    implment QT Gui
+    import tasks from Jira
 ``` 
   
