@@ -51,7 +51,7 @@ A Task is defeind by:
   
 **To be Done:**
 ```
-    implment QT Gui
+    implment Gui (options: QT or https://github.com/SergioBenitez/Rocket or https://github.com/Boscop/web-view or)
     import tasks from Jira
 ``` 
   
