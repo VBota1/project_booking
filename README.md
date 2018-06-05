@@ -36,9 +36,10 @@ A Task is defeind by:
     ./project_booking_cli report
     ./project_booking_cli clockOut task510
     ./project_booking_cli reportByLabel
+    ./project_booking_cli reportByDay 5
     ./project_booking_cli addTime task510 01:01
     ./project_booking_cli addTime task510 01:01 31.05.2021
-    ./project_booking_cli delete
+    ./project_booking_cli delete task510
     ./project_booking_cli help
     ./project_booking_cli license
     ./project_booking_cli applicationMode
@@ -47,6 +48,8 @@ A Task is defeind by:
 **Known issues:**
 ```
     timesamp for log messages is invalid
+    the delete instruction example must be followed by a task name
+    the command "reportByDay 5" where 5 is the month is unnatural. Command should be renamed
 ```
   
 **To be Done:**
