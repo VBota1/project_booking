@@ -129,7 +129,7 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {11} 5
 \t./project_booking_cli {5} task510 01:01
 \t./project_booking_cli {5} task510 01:01 31.05.2021
-\t./project_booking_cli {6}
+\t./project_booking_cli {6} task510
 \t./project_booking_cli {7}
 \t./project_booking_cli {8}
 \t./project_booking_cli {9}
