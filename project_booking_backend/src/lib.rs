@@ -21,7 +21,7 @@ const CLOCKIN: &'static str = "clockIn";
 const CLOCKOUT: &'static str = "clockOut";
 const REPORT: &'static str = "report";
 const REPORTBYLABEL: &'static str = "reportByLabel";
-const REPORTBYDAY: &'static str = "reportByDay";
+const REPORTFORMONTH: &'static str = "reportForMonth";
 const ADDTIME: &'static str = "addTime";
 const DELETE: &'static str = "delete";
 const HELP: &'static str = "help";
@@ -72,7 +72,7 @@ pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -
                     trace(format!("Report time spent on labels request detected"));
                     Response { message: report_time_on_labels(to_do).as_string(), should_save: false }
                 },
-                REPORTBYDAY => {
+                REPORTFORMONTH => {
                     trace(format!("Daily activity report request detected"));
                     Response { message: daily_activity_report(args, to_do).as_string(), should_save: false }
                 },
@@ -134,7 +134,7 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {8}
 \t./project_booking_cli {9}
 \t{10}
-    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTBYDAY)
+    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTFORMONTH)
 }
 
 fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {

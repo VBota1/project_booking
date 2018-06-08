@@ -69,7 +69,7 @@ impl ToDo {
             let time_records = t.time_spent();
             for (date, task_duration) in time_records {
                 let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
-                task_info.push(format!("{} {}", t.name(), task_duration.as_hhmmss()));
+                task_info.push(format!("task name: {} time spent: {} labels: {}", t.name(), task_duration.as_hhmmss(), t.labels().join(" ")));
             }
         }
 
@@ -90,7 +90,7 @@ impl ToDo {
             }
         }
 
-        time_on_labels.iter().map(|(label, time)| format!("{} {}", label, time.as_hhmmss())).collect()
+        time_on_labels.iter().map(|(label, time)| format!("label: {} time spent: {}", label, time.as_hhmmss())).collect()
     }
 
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {

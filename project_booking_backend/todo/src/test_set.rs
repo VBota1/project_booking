@@ -15,8 +15,8 @@ fn id_is_unique () {
     let mut task_count =0;
     for mut t in todo.to_report() {
         task_count +=1;
-        let expected = format!("{0} task{0} 00:00:00 None", task_count);
-        assert!(t == expected, format!("Actual {} Expected {}", t, expected));
+        let expected = format!("task id: {0} name: task{0} time spent: 00:00:00 clock in timestamp: None labels: None", task_count);
+        assert!(t == expected, format!("\nActual \t\t{} \nExpected \t{}", t, expected));
     }
 }
 
@@ -57,8 +57,8 @@ fn retrieve_from_storage() {
     match load(None) {
         Ok(reterived_data) => {
             if let Some(task) = reterived_data.to_report().get(0) {
-                let expected = format!("1 {} 00:00:00 None", task_name.clone());
-                assert!(task.clone() == expected, format!("Actual {} Expected {}", task, expected));
+                let expected = format!("task id: 1 name: {} time spent: 00:00:00 clock in timestamp: None labels: None", task_name.clone());
+                assert!(task.clone() == expected, format!("\nActual \t\t{} \nExpected \t{}", task, expected));
             } else { assert!(false, "No task could not be retrieved from the loaded data."); }
         },
         Err(message) => {
@@ -96,8 +96,8 @@ fn measure_time_spent_on_task() {
     }
 
     if let Some(task) = todo.to_report().get(0) {
-        let expected = format!("1 {} 00:00:05 None", task_name.clone());
-        assert!(task.clone() == expected, format!("Actual {} Expected {}", task, expected));
+        let expected = format!("task id: 1 name: {} time spent: 00:00:05 clock in timestamp: None labels: None", task_name.clone());
+        assert!(task.clone() == expected, format!("\nActual \t\t{} \nExpected \t{}", task, expected));
     } else { assert!(false, "No task could not be retrieved from the loaded data."); }
 }
 
@@ -161,7 +161,10 @@ fn report_time_by_label() {
 
     for line in actual_report {
         let mut line_vector: Vec<String> = line.clone().split_whitespace().map(|s| format!("{}", s)).collect();
+        line_vector.remove(0);
         let label_name = line_vector.remove(0);
+        line_vector.remove(0);
+        line_vector.remove(0);
         let time_spent = line_vector.remove(0);
         if label_name == label1 {
             let expected = Duration::new(9, 0).as_hhmmss();

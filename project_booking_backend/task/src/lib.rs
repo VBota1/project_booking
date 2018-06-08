@@ -28,12 +28,13 @@ impl Task {
     pub fn as_vec_string (&self) -> Vec<String> {
         let mut output: Vec<String> = Vec::new();
 
-        output.push(format!("{}",self._id));
+        output.push(format!("task id: {}", self._id));
 
-        output.push(format!("{}",self._name));
+        output.push(format!("name: {}", self._name));
 
-        output.push(format!("{}", self.total_time_spent().as_hhmmss()));
+        output.push(format!("time spent: {}", self.total_time_spent().as_hhmmss()));
 
+        output.push(format!("clock in timestamp:"));
         match self._clock_in_timestamp {
             Some(timestamp) => {
                 output.push(format!("{:?}", timestamp));
@@ -43,9 +44,14 @@ impl Task {
             }
         };
 
+        output.push(format!("labels:"));
         let labels = self._labels.clone();
-        for l in labels {
-            output.push(format!("{}",l));
+        if self._labels.len() <= 0 {
+            output.push(format!("None"));
+        } else {
+            for l in labels {
+                output.push(format!("{}", l));
+            }
         }
 
         output

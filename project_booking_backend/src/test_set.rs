@@ -32,7 +32,7 @@ fn test_handle_command_as_service() {
     let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
     let actual_report = handle_command_as_service(args_vec);
 
-    let expected_report = format!("1 {} {} None {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
 }
@@ -77,7 +77,7 @@ fn control_1_task_as_service() {
         }
     };
 
-    let expected_report = format!("1 {} {} None {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report, "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report);
 }
@@ -110,7 +110,7 @@ fn control_1_task_as_aplication() {
         }
     };
 
-    let expected_report = format!("1 {} {} None {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
 
@@ -274,6 +274,6 @@ fn activity_report() {
     let args_vec = vec![month_argument];
     let args = args_vec.iter();
     let actual_report = daily_activity_report(args, &to_do).as_string();
-    let expected_report = format!("{}\n{} 01:01:00", date_argument, task_name_510);
+    let expected_report = format!("{}\ntask name: {} time spent: 01:01:00 labels: {} {}", date_argument, task_name_510, label_1, label_2);
     assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
 }
