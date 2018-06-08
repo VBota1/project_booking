@@ -36,7 +36,7 @@ A Task is defeind by:
     ./project_booking_cli report
     ./project_booking_cli clockOut task510
     ./project_booking_cli reportByLabel
-    ./project_booking_cli reportByDay 5
+    ./project_booking_cli reportForMonth 5
     ./project_booking_cli addTime task510 01:01
     ./project_booking_cli addTime task510 01:01 31.05.2021
     ./project_booking_cli delete task510
@@ -48,6 +48,7 @@ A Task is defeind by:
 **Known issues:**
 ```
     timesamp for log messages is invalid
+    days reported with command reportForMonth are not sorted 
 ```
   
 **To be Done:**
