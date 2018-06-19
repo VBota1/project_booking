@@ -319,7 +319,9 @@ fn recommend_help() -> String {
 
 fn license() -> String {
     format!("
-MIT License
+The complete source code is stored at: https://github.com/VBota1/project_booking
+
+the projects: project_booking_backend and project_booking_cli are provided under MIT License
 Copyright (c) 2018 V Bota
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
