@@ -114,6 +114,13 @@ impl Task {
         *value += time;
         value.clone()
     }
+
+    pub fn clock_in_timestamp(&self) -> Option<SystemTime> {
+        match self._clock_in_timestamp {
+            Some(time) => { Some(time.clone()) },
+            None => { None }
+        }
+    }
 }
 
 /*MIT LICENSE for extern crates serde, serde_json and serde_derive:

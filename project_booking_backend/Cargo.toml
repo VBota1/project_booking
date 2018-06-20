@@ -7,4 +7,5 @@ authors = ["Viorel Bota <botaviorel@gmail.com>"]
 todo = { path = "todo" }
 logger = { path = "logger" }
 formaters = { path = "formaters" }
+report = { path = "report" }
 chrono = "0.4"

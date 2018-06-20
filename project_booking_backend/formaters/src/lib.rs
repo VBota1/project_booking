@@ -1,5 +1,5 @@
-use std::time::Duration;
-use chrono::NaiveDate;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use chrono::{NaiveDate, NaiveDateTime};
 
 extern crate chrono;
 
@@ -44,4 +44,30 @@ impl AsString for Result<String, String>
             Err(message) => message.clone(),
         }
     }
+}
+
+pub trait TimeAsString {
+    fn as_string(&self) -> String;
+}
+
+impl TimeAsString for SystemTime {
+    fn as_string(&self) -> String {
+        system_time_to_date_time(*self).to_string()
+    }
+}
+
+fn system_time_to_date_time(t: SystemTime) -> NaiveDateTime {
+    let (sec, nsec) = match t.duration_since(UNIX_EPOCH) {
+        Ok(dur) => (dur.as_secs() as i64, dur.subsec_nanos()),
+        Err(e) => { // unlikely but should be handled
+            let dur = e.duration();
+            let (sec, nsec) = (dur.as_secs() as i64, dur.subsec_nanos());
+            if nsec == 0 {
+                (-sec, 0)
+            } else {
+                (-sec - 1, 1_000_000_000 - nsec)
+            }
+        },
+    };
+    NaiveDateTime::from_timestamp(sec, nsec)
 }
