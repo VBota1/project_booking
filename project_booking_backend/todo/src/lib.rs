@@ -41,15 +41,6 @@ impl ToDo {
         }
     }
 
-    pub fn to_report(&self) -> Vec<String> {
-        let mut output = Vec::new();
-        let tasklist = self.list.as_slice();
-        for t in tasklist {
-            output.push(t.as_vec_string().join(" "));
-        }
-        output
-    }
-
     pub fn report_daily_activity_for_month(&self, month_to_report: u32) -> HashMap<String, Vec<String>> {
         let mut report = self.report_daily_activity();
         report.retain(|date, _|
@@ -76,23 +67,6 @@ impl ToDo {
         task_durations_on_day
     }
 
-    pub fn report_time_spent_on_labels(&self) -> Vec<String> {
-        let mut time_on_labels = HashMap::new();
-
-        let tasklist = self.list.as_slice();
-        for t in tasklist {
-            let time_per_label = t.total_time_spent().checked_div(t.labels().len() as u32).unwrap_or(t.total_time_spent());
-
-            let labels = t.labels();
-            for l in labels {
-                let value = time_on_labels.entry(l).or_insert(Duration::new(0, 0));
-                *value += time_per_label;
-            }
-        }
-
-        time_on_labels.iter().map(|(label, time)| format!("label: {} time spent: {}", label, time.as_hhmmss())).collect()
-    }
-
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {
         let serilazed_data;
         match serde_json::to_string(self) {
@@ -102,7 +76,6 @@ impl ToDo {
             Err(_) => {
                 return Err (format!("Data could not be serialized"));
             }
-
         };
 
         let backup_file = save_file.unwrap_or(backup_file());

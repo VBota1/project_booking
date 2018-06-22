@@ -13,10 +13,9 @@ fn id_is_unique () {
     todo.add(format!("task4"), Vec::new());
 
     let mut task_count =0;
-    for mut t in todo.to_report() {
+    for mut t in todo.list {
         task_count +=1;
-        let expected = format!("task id: {0} name: task{0} time spent: 00:00:00 clock in timestamp: None labels: None", task_count);
-        assert!(t == expected, format!("\nActual \t\t{} \nExpected \t{}", t, expected));
+        assert!(t.id() == task_count, format!("\nActual \t\t{} \nExpected \t{}", t.id(), task_count));
     }
 }
 
@@ -56,9 +55,9 @@ fn retrieve_from_storage() {
 
     match load(None) {
         Ok(reterived_data) => {
-            if let Some(task) = reterived_data.to_report().get(0) {
-                let expected = format!("task id: 1 name: {} time spent: 00:00:00 clock in timestamp: None labels: None", task_name.clone());
-                assert!(task.clone() == expected, format!("\nActual \t\t{} \nExpected \t{}", task, expected));
+            if let Some(task) = reterived_data.list.get(0) {
+                let expected = task_name.clone();
+                assert!(task.name() == expected, format!("\nActual \t\t{} \nExpected \t{}", task.name(), expected));
             } else { assert!(false, "No task could not be retrieved from the loaded data."); }
         },
         Err(message) => {
@@ -95,9 +94,9 @@ fn measure_time_spent_on_task() {
         Err(message) => { assert!(false, message); }
     }
 
-    if let Some(task) = todo.to_report().get(0) {
-        let expected = format!("task id: 1 name: {} time spent: 00:00:05 clock in timestamp: None labels: None", task_name.clone());
-        assert!(task.clone() == expected, format!("\nActual \t\t{} \nExpected \t{}", task, expected));
+    if let Some(task) = todo.list.get(0) {
+        let expected = format!("00:00:05");
+        assert!(task.total_time_spent().as_hhmmss() == expected, format!("\nActual \t\t{} \nExpected \t{}", task.total_time_spent().as_hhmmss(), expected));
     } else { assert!(false, "No task could not be retrieved from the loaded data."); }
 }
 
@@ -113,7 +112,7 @@ fn load_data_after_clock_out() {
     todo = match load(None) {
         Ok(todo) => { todo },
         Err(error) => {
-            assert!(false, "Loading data failed with error \"{}\" after clockIn and save perfomed.", error);
+            assert!(false, "Loading data failed with error \"{}\" after clockIn and save performed.", error);
             ToDo::new()
         },
     };
@@ -128,59 +127,4 @@ fn load_data_after_clock_out() {
             assert!(false, "Loading data failed with error \"{}\" after clockOut and save perfomed.", error);
         },
     };
-}
-
-#[test]
-fn report_time_by_label() {
-    let task1 = format!("task1");
-    let task2 = format!("task2");
-    let task3 = format!("task3");
-    let task4 = format!("task4");
-    let label1 = format!("label_1");
-    let label2 = format!("label_2");
-    let label3 = format!("label_3");
-    let mut todo = ToDo::new();
-    todo.add(task1.clone(), vec![label1.clone()]);
-    todo.add(task2.clone(), vec![label2.clone()]);
-    todo.add(task3.clone(), vec![label1.clone(), label2.clone()]);
-    todo.add(task4.clone(), vec![label3.clone()]);
-    todo.clock_in(task1.clone());
-    todo.clock_in(task2.clone());
-    todo.clock_in(task3.clone());
-    todo.clock_in(task4.clone());
-
-    let actual_time_spent_on_task = Duration::new(6, 0);
-    sleep(actual_time_spent_on_task);
-
-    todo.clock_out(task1);
-    todo.clock_out(task2);
-    todo.clock_out(task3);
-    todo.clock_out(task4);
-
-    let actual_report = todo.report_time_spent_on_labels();
-
-    for line in actual_report {
-        let mut line_vector: Vec<String> = line.clone().split_whitespace().map(|s| format!("{}", s)).collect();
-        line_vector.remove(0);
-        let label_name = line_vector.remove(0);
-        line_vector.remove(0);
-        line_vector.remove(0);
-        let time_spent = line_vector.remove(0);
-        if label_name == label1 {
-            let expected = Duration::new(9, 0).as_hhmmss();
-            assert!(time_spent == expected, "Label {} Actual {} Expected {}", label1, time_spent, expected);
-        } else {
-            if label_name == label2 {
-                let expected = Duration::new(9, 0).as_hhmmss();
-                assert!(time_spent == expected, "Label {} Actual {} Expected {}", label2, time_spent, expected);
-            } else {
-                if label_name == label3 {
-                    let expected = Duration::new(6, 0).as_hhmmss();
-                    assert!(time_spent == expected, "Label {} Actual {} Expected {}", label3, time_spent, expected);
-                } else {
-                    assert!(false, "Unexpected label \"{}\" was reported", label_name);
-                }
-            }
-        }
-    }
 }

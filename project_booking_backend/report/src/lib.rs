@@ -23,13 +23,13 @@ pub struct DayReport {
 }
 
 pub trait ToDoReportMothJurnal {
-    fn report_month_jurnal(&self, month_to_report: u32) -> Vec<DayReport>;
-    fn report_daily_activity(&self) -> HashMap<String, Vec<TaskReport>>;
+    fn to_month_jurnal_report(&self, month_to_report: u32) -> Vec<DayReport>;
+    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskReport>>;
 }
 
 impl ToDoReportMothJurnal for ToDo {
-    fn report_month_jurnal(&self, month_to_report: u32) -> Vec<DayReport> {
-        let mut report = self.report_daily_activity();
+    fn to_month_jurnal_report(&self, month_to_report: u32) -> Vec<DayReport> {
+        let mut report = self.to_daily_activity_report();
         report.retain(|date, _|
             match NaiveDate::parse_from_str(date, dmy_format().as_str()) {
                 Ok(date) => { date.month() == month_to_report }
@@ -41,7 +41,7 @@ impl ToDoReportMothJurnal for ToDo {
         report
     }
 
-    fn report_daily_activity(&self) -> HashMap<String, Vec<TaskReport>> {
+    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskReport>> {
         let mut task_durations_on_day: HashMap<String, Vec<TaskReport>> = HashMap::new();
 
         let tasklist = self.list.as_slice();
@@ -65,16 +65,16 @@ impl std::clone::Clone for TaskReport {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LabelReport {
-    label: String,
-    time: String,
+    pub label: String,
+    pub time: String,
 }
 
 pub trait ToDoReportTimeOnLabels {
-    fn report_time_on_labels(&self) -> Vec<LabelReport>;
+    fn to_time_on_labels_report(&self) -> Vec<LabelReport>;
 }
 
 impl ToDoReportTimeOnLabels for ToDo {
-    fn report_time_on_labels(&self) -> Vec<LabelReport> {
+    fn to_time_on_labels_report(&self) -> Vec<LabelReport> {
         let mut time_on_labels = HashMap::new();
 
         let tasklist = self.list.as_slice();
@@ -102,11 +102,11 @@ pub struct TaskReport {
 }
 
 pub trait ToDoCompleteReport {
-    fn complete_report(&self) -> Vec<TaskReport>;
+    fn to_complete_report(&self) -> Vec<TaskReport>;
 }
 
 impl ToDoCompleteReport for ToDo {
-    fn complete_report(&self) -> Vec<TaskReport> {
+    fn to_complete_report(&self) -> Vec<TaskReport> {
         let mut output: Vec<TaskReport> = Vec::new();
         let tasklist = self.list.as_slice();
         for t in tasklist {

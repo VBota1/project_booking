@@ -2,6 +2,7 @@ extern crate todo;
 extern crate formaters;
 extern crate logger;
 extern crate chrono;
+extern crate report;
 
 use todo::*;
 use logger::*;
@@ -11,6 +12,10 @@ use std::slice::Iter;
 use std::time::Duration;
 use formaters::AsHHMMSS;
 use chrono::NaiveDate;
+use report::*;
+
+extern crate serde;
+extern crate serde_json;
 
 //TODO MEDIUM PRIO GUI (QT)
 //TODO LOW PRIO import tasks from Jira
@@ -153,13 +158,27 @@ fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
 fn report(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
-    Ok(to_do.to_report().join("\n"))
+    match serde_json::to_string(&to_do.to_complete_report()) {
+        Ok(data_as_string) => {
+            Ok(data_as_string)
+        },
+        Err(_) => {
+            Err(error(format!("Data could not be serialized")))
+        }
+    }
 }
 
 fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
-    Ok(to_do.report_time_spent_on_labels().join("\n"))
+    match serde_json::to_string(&to_do.to_time_on_labels_report()) {
+        Ok(data_as_string) => {
+            Ok(data_as_string)
+        },
+        Err(_) => {
+            Err(error(format!("Data could not be serialized")))
+        }
+    }
 }
 
 fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String, String> {

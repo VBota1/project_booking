@@ -4,6 +4,7 @@ use std::time::Duration;
 use std::thread::sleep;
 use super::formaters::AsHHMMSS;
 
+//TODO update these tests
 #[test]
 fn test_handle_command_as_service() {
     let to_do: ToDo = ToDo::new();
@@ -32,7 +33,7 @@ fn test_handle_command_as_service() {
     let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
     let actual_report = handle_command_as_service(args_vec);
 
-    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"{}\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
 }
@@ -77,7 +78,7 @@ fn control_1_task_as_service() {
         }
     };
 
-    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"{}\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report, "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report);
 }
@@ -110,7 +111,7 @@ fn control_1_task_as_aplication() {
         }
     };
 
-    let expected_report = format!("task id: 1 name: {} time spent: {} clock in timestamp: None labels: {} {}", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
+    let expected_report = format!("[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"{}\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
 
     assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
 
@@ -277,3 +278,53 @@ fn activity_report() {
     let expected_report = format!("{}\ntask name: {} time spent: 01:01:00 labels: {} {}", date_argument, task_name_510, label_1, label_2);
     assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
 }
+
+#[test]
+fn report_time_by_label() {
+    let task1 = format!("task1");
+    let task2 = format!("task2");
+    let task3 = format!("task3");
+    let task4 = format!("task4");
+    let label1 = format!("label_1");
+    let label2 = format!("label_2");
+    let label3 = format!("label_3");
+    let mut todo = ToDo::new();
+    todo.add(task1.clone(), vec![label1.clone()]);
+    todo.add(task2.clone(), vec![label2.clone()]);
+    todo.add(task3.clone(), vec![label1.clone(), label2.clone()]);
+    todo.add(task4.clone(), vec![label3.clone()]);
+    todo.clock_in(task1.clone());
+    todo.clock_in(task2.clone());
+    todo.clock_in(task3.clone());
+    todo.clock_in(task4.clone());
+
+    let actual_time_spent_on_task = Duration::new(6, 0);
+    sleep(actual_time_spent_on_task);
+
+    todo.clock_out(task1);
+    todo.clock_out(task2);
+    todo.clock_out(task3);
+    todo.clock_out(task4);
+
+    let actual_report = todo.to_time_on_labels_report();
+
+    for line in actual_report {
+        if label1 == line.label {
+            let expected = Duration::new(9, 0).as_hhmmss();
+            assert!(line.time == expected, "Label {} Actual {} Expected {}", label1, line.time, expected);
+        } else {
+            if label2 == line.label {
+                let expected = Duration::new(9, 0).as_hhmmss();
+                assert!(line.time == expected, "Label {} Actual {} Expected {}", label2, line.time, expected);
+            } else {
+                if label3 == line.label {
+                    let expected = Duration::new(6, 0).as_hhmmss();
+                    assert!(line.time == expected, "Label {} Actual {} Expected {}", label3, line.time, expected);
+                } else {
+                    assert!(false, "Unexpected label \"{}\" was reported", line.label);
+                }
+            }
+        }
+    }
+}
+
