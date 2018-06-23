@@ -198,12 +198,14 @@ fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String,
         }
     };
 
-    let mut days = Vec::new();
-    for (date, task_info) in to_do.report_daily_activity_for_month(month) {
-        days.push(format!("{}\n{}", date, task_info.join("\n")))
+    match serde_json::to_string(&to_do.to_month_jurnal_report(month)) {
+        Ok(data_as_string) => {
+            Ok(data_as_string)
+        },
+        Err(_) => {
+            Err(error(format!("Data could not be serialized")))
+        }
     }
-
-    Ok(days.join("\n\n"))
 }
 
 fn no_tasks_recorderd_message() -> String {

@@ -7,11 +7,8 @@ use identifiers::UniqueIdentifier;
 use task::Task;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::collections::HashMap;
 use std::time::Duration;
-use formaters::AsHHMMSS;
-use formaters::dmy_format;
-use chrono::{NaiveDate, Datelike};
+use chrono::NaiveDate;
 
 #[macro_use]
 extern crate serde_derive;
@@ -39,32 +36,6 @@ impl ToDo {
                 Ok(format!("Task with name \"{}\" was added", p_name))
             },
         }
-    }
-
-    pub fn report_daily_activity_for_month(&self, month_to_report: u32) -> HashMap<String, Vec<String>> {
-        let mut report = self.report_daily_activity();
-        report.retain(|date, _|
-            match NaiveDate::parse_from_str(date, dmy_format().as_str()) {
-                Ok(date) => { date.month() == month_to_report },
-                Err(_) => { false }
-            }
-        );
-        report
-    }
-
-    fn report_daily_activity(&self) -> HashMap<String, Vec<String>> {
-        let mut task_durations_on_day: HashMap<String, Vec<String>> = HashMap::new();
-
-        let tasklist = self.list.as_slice();
-        for t in tasklist {
-            let time_records = t.time_spent();
-            for (date, task_duration) in time_records {
-                let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
-                task_info.push(format!("task name: {} time spent: {} labels: {}", t.name(), task_duration.as_hhmmss(), t.labels().join(" ")));
-            }
-        }
-
-        task_durations_on_day
     }
 
     pub fn save(&self, save_file: Option<String>) -> Result<String,String> {

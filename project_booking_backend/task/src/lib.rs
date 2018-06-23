@@ -25,38 +25,6 @@ impl Task {
         Task { _id: uid, _name: p_name, _labels: p_labels, _time_spent: HashMap::new(), _clock_in_timestamp: None }
     }
 
-    pub fn as_vec_string (&self) -> Vec<String> {
-        let mut output: Vec<String> = Vec::new();
-
-        output.push(format!("task id: {}", self._id));
-
-        output.push(format!("name: {}", self._name));
-
-        output.push(format!("time spent: {}", self.total_time_spent().as_hhmmss()));
-
-        output.push(format!("clock in timestamp:"));
-        match self._clock_in_timestamp {
-            Some(timestamp) => {
-                output.push(format!("{:?}", timestamp));
-            },
-            None => {
-                output.push(format!("None"));
-            }
-        };
-
-        output.push(format!("labels:"));
-        let labels = self._labels.clone();
-        if self._labels.len() <= 0 {
-            output.push(format!("None"));
-        } else {
-            for l in labels {
-                output.push(format!("{}", l));
-            }
-        }
-
-        output
-    }
-
     pub fn clock_in(&mut self) -> Result<String, String> {
         self._clock_in_timestamp = Some(SystemTime::now());
         Ok(format!("Clocked in task \"{}\"", self.name()))

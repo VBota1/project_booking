@@ -2,7 +2,7 @@ use super::ToDo;
 use super::*;
 use std::time::Duration;
 use std::thread::sleep;
-use super::formaters::AsHHMMSS;
+use formaters::AsHHMMSS;
 
 //TODO update these tests
 #[test]
@@ -275,7 +275,7 @@ fn activity_report() {
     let args_vec = vec![month_argument];
     let args = args_vec.iter();
     let actual_report = daily_activity_report(args, &to_do).as_string();
-    let expected_report = format!("{}\ntask name: {} time spent: 01:01:00 labels: {} {}", date_argument, task_name_510, label_1, label_2);
+    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"02:02:00\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]}}]", date_argument, task_name_510, label_1, label_2);
     assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
 }
 
