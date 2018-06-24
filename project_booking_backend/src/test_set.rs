@@ -5,39 +5,6 @@ use std::thread::sleep;
 use formaters::AsHHMMSS;
 
 #[test]
-fn test_handle_command_as_service() {
-    let to_do: ToDo = ToDo::new();
-    forced_store(to_do);
-
-    let aplication_name = format!("test");
-    let command = format!("new");
-    let task_name = format!("task512");
-    let label_1 = format!("label_1");
-    let label_2 = format!("label_2");
-    let args_vec = vec![aplication_name.clone(), command, task_name.clone(), label_1.clone(), label_2.clone()];
-    handle_command_as_service(args_vec);
-
-    let command = format!("clockIn");
-    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
-    handle_command_as_service(args_vec);
-
-    let actual_time_spent_on_task = Duration::new(5, 0);
-    sleep(actual_time_spent_on_task);
-
-    let command = format!("clockOut");
-    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
-    handle_command_as_service(args_vec);
-
-    let command = format!("report");
-    let args_vec = vec![aplication_name.clone(), command, task_name.clone()];
-    let actual_report = handle_command_as_service(args_vec);
-
-    let expected_report = format!("[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"{}\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]", task_name, actual_time_spent_on_task.as_hhmmss(), label_1, label_2);
-
-    assert!(actual_report == expected_report.clone(), "Actual report \"{}\" Expected report \"{}\"", actual_report, expected_report.clone());
-}
-
-#[test]
 fn control_1_task_as_service() {
     let mut to_do: ToDo = ToDo::new();
 
@@ -203,7 +170,7 @@ fn delete_task() {
     let args = args_vec.iter();
     match delete(args, &mut todo) {
         Ok(message) => {
-            let expected_message = format!("Task {} was removed.", task_name);
+            let expected_message = format!("Task {} was removed at index 0.", task_name);
             assert!(message == expected_message, "Expected {} Actual {}", expected_message, message);
         },
         Err(message) => {
@@ -211,71 +178,7 @@ fn delete_task() {
         }
     };
 
-    assert!(todo.count() == 1, "Expected numer of Tasks 1. Actual {}", todo.count());
-}
-
-#[test]
-fn activity_report() {
-    let mut to_do: ToDo = ToDo::new();
-
-    let task_name_510 = format!("task510");
-    let label_1 = format!("label_1");
-    let label_2 = format!("label_2");
-    let args_vec = vec![task_name_510.clone(), label_1.clone(), label_2.clone()];
-    let args = args_vec.iter();
-    create_new_task_from_arguments(args, &mut to_do);
-
-    let time_argument = format!("01:01");
-    let args_vec = vec![task_name_510.clone(), time_argument];
-    let args = args_vec.iter();
-    match add_time(args, &mut to_do) {
-        Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name_510.clone());
-            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
-        },
-        Err(response) => {
-            assert!(false, response);
-        }
-    };
-
-    let time_argument = format!("01:01");
-    let date_argument = format!("01.01.2001");
-    let args_vec = vec![task_name_510.clone(), time_argument, date_argument.clone()];
-    let args = args_vec.iter();
-    match add_time(args, &mut to_do) {
-        Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name_510.clone());
-            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
-        },
-        Err(response) => {
-            assert!(false, response);
-        }
-    };
-
-    let task_name_500 = format!("task500");
-    let args_vec = vec![task_name_500.clone()];
-    let args = args_vec.iter();
-    create_new_task_from_arguments(args, &mut to_do);
-
-    let time_argument = format!("00:01");
-    let args_vec = vec![task_name_500.clone(), time_argument];
-    let args = args_vec.iter();
-    match add_time(args, &mut to_do) {
-        Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"00:01:00\"", task_name_500.clone());
-            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
-        },
-        Err(response) => {
-            assert!(false, response);
-        }
-    };
-
-    let month_argument = format!("01");
-    let args_vec = vec![month_argument];
-    let args = args_vec.iter();
-    let actual_report = daily_activity_report(args, &to_do).as_string();
-    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"02:02:00\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]}}]", date_argument, task_name_510, label_1, label_2);
-    assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
+    assert!(todo.count() == 1, "Expected number of Tasks 1. Actual {}", todo.count());
 }
 
 #[test]

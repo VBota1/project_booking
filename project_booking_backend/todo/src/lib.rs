@@ -90,7 +90,7 @@ impl ToDo {
     pub fn remove_task(&mut self, task_name: String) -> Result<String, String> {
         let index = self.list.index_of_task_by_name(task_name.clone())?;
         self.list.remove(index);
-        Ok(format!("Task {} was removed.", task_name))
+        Ok(format!("Task {} was removed at index {}.", task_name, index))
     }
 }
 

@@ -242,12 +242,10 @@ pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, Stri
 }
 
 pub fn store(to_do: ToDo) -> Result<String, String> {
-    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
-
     forced_store(to_do)
 }
 
-fn forced_store(to_do: ToDo) -> Result<String, String> {
+pub fn forced_store(to_do: ToDo) -> Result<String, String> {
     to_do.save(None).log_result()
 }
 
