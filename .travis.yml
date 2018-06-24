@@ -6,8 +6,8 @@ jobs:
   include:
     - stage: test
       script: 
-        - cd project_booking_backend && cargo test
-        - cd todo && cargo test
+        - cd project_booking_backend && RUST_TEST_THREADS=1 cargo test
+        - cd todo && RUST_TEST_THREADS=1 cargo test
     - stage: build
       script: cd project_booking_cli && cargo build --release      
  
