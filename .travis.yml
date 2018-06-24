@@ -6,11 +6,9 @@ jobs:
   include:
     - stage: test
       script: cd project_booking_backend
-      script: cargo test
-      script: cd todo
-      script: cargo test      
-      script: cd ../
-      script: cd ../
+      script: cargo test --verbose
+      script: cd project_booking_backend/todo
+      script: cargo test --verbose
     - stage: build
       script: cd project_booking_cli
       script: cargo build --release
