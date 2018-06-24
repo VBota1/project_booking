@@ -6,7 +6,6 @@ extern crate report;
 
 use todo::*;
 use logger::*;
-use formaters::AsString;
 use formaters::dmy_format;
 use std::slice::Iter;
 use std::time::Duration;
@@ -21,16 +20,16 @@ extern crate serde_json;
 //TODO LOW PRIO import tasks from Jira
 //TODO LOW PRIO export tasks to PTT
 
-const NEW: &'static str = "new";
-const CLOCKIN: &'static str = "clockIn";
-const CLOCKOUT: &'static str = "clockOut";
-const REPORT: &'static str = "report";
-const REPORTBYLABEL: &'static str = "reportByLabel";
-const REPORTFORMONTH: &'static str = "reportForMonth";
-const ADDTIME: &'static str = "addTime";
-const DELETE: &'static str = "delete";
-const HELP: &'static str = "help";
-const LICENSE: &'static str = "license";
+pub const NEW: &'static str = "new";
+pub const CLOCKIN: &'static str = "clockIn";
+pub const CLOCKOUT: &'static str = "clockOut";
+pub const REPORT: &'static str = "report";
+pub const REPORTBYLABEL: &'static str = "reportByLabel";
+pub const REPORTFORMONTH: &'static str = "reportForMonth";
+pub const ADDTIME: &'static str = "addTime";
+pub const DELETE: &'static str = "delete";
+pub const HELP: &'static str = "help";
+pub const LICENSE: &'static str = "license";
 pub const APPLICATIONMODE: &'static str = "applicationMode";
 pub const EXIT: &'static str = "exit";
 
@@ -39,76 +38,7 @@ pub struct Response {
     pub should_save: bool,
 }
 
-pub fn handle_command_as_service(args: Vec<String>) -> String {
-    let mut to_do: ToDo = get_to_do(None);
-    let mut args = args.iter();
-    args.next();
-    let result = handle_command_as_application(args, &mut to_do);
-    if true == result.should_save {
-        match store(to_do) {
-            Ok(_) => {},
-            Err(store_error) => { return format!("{}. {}", result.message, store_error); }
-        };
-    }
-    result.message
-}
-
-pub fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -> Response {
-    match args.nth(0) {
-        Some(command) => {
-            match command.as_str() {
-                NEW => {
-                    trace(format!("New task request detected"));
-                    Response { message: create_new_task_from_arguments(args, to_do).as_string(), should_save: true }
-                },
-                CLOCKIN => {
-                    trace(format!("Clock in request detected"));
-                    Response { message: clock_in(args, to_do).as_string(), should_save: true }
-                },
-                CLOCKOUT => {
-                    trace(format!("Clock out request detected"));
-                    Response { message: clock_out(args, to_do).as_string(), should_save: true }
-                },
-                REPORT => {
-                    trace(format!("Report request detected"));
-                    Response { message: report(to_do).as_string(), should_save: false }
-                },
-                REPORTBYLABEL => {
-                    trace(format!("Report time spent on labels request detected"));
-                    Response { message: report_time_on_labels(to_do).as_string(), should_save: false }
-                },
-                REPORTFORMONTH => {
-                    trace(format!("Daily activity report request detected"));
-                    Response { message: daily_activity_report(args, to_do).as_string(), should_save: false }
-                },
-                ADDTIME => {
-                    trace(format!("Add time request detected"));
-                    Response { message: add_time(args, to_do).as_string(), should_save: true }
-                }
-                DELETE => {
-                    trace(format!("Delete request detected"));
-                    Response { message: delete(args, to_do).as_string(), should_save: false }
-                }
-                HELP => {
-                    trace(format!("Help request detected"));
-                    Response { message: help(), should_save: false }
-                },
-                LICENSE => {
-                    trace(format!("License request detected"));
-                    Response { message: license(), should_save: false }
-                },
-                _ => {
-                    Response { message: warn(format!("Unknown command \"{}\". {}", command, recommend_help())), should_save: false }
-                },
-            }
-        },
-        None => {
-            Response { message: warn(format!("No command received. {}", recommend_help())), should_save: false }
-        },
-    }
-}
-
-fn help() -> String {
+pub fn help() -> String {
     format!("Version 016012000
 Service mode usage: ./project_booking_cli command [task][labels][time]
 Application mode usage: command [task][labels][time]
@@ -142,7 +72,7 @@ Application mode usage: command [task][labels][time]
     ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTFORMONTH)
 }
 
-fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+pub fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     let task_name = match args.nth(0) {
@@ -155,7 +85,7 @@ fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     to_do.remove_task(task_name).log_result()
 }
 
-fn report(to_do: &ToDo) -> Result<String, String> {
+pub fn report(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match serde_json::to_string(&to_do.to_complete_report()) {
@@ -168,7 +98,7 @@ fn report(to_do: &ToDo) -> Result<String, String> {
     }
 }
 
-fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
+pub fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match serde_json::to_string(&to_do.to_time_on_labels_report()) {
@@ -181,7 +111,7 @@ fn report_time_on_labels(to_do: &ToDo) -> Result<String, String> {
     }
 }
 
-fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String, String> {
+pub fn daily_activity_report(mut args: Iter<String>, to_do: &ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     let month = match args.nth(0) {
@@ -212,7 +142,7 @@ fn no_tasks_recorderd_message() -> String {
     format!("No tasks are recorded")
 }
 
-fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+pub fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match args.nth(0) {
@@ -225,7 +155,7 @@ fn clock_out(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String>
     }
 }
 
-fn clock_in(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+pub fn clock_in(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     match args.nth(0) {
@@ -238,7 +168,7 @@ fn clock_in(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> 
     }
 }
 
-fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+pub fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     match args.nth(0) {
         Some(task) => {
             let labels: Vec<String> = args.cloned().collect();
@@ -250,7 +180,7 @@ fn create_new_task_from_arguments(mut args: Iter<String>, to_do: &mut ToDo) -> R
     }
 }
 
-fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
     if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
 
     let task_name = match args.nth(0) {
@@ -334,11 +264,11 @@ pub fn get_to_do(load_file: Option<String>) -> ToDo {
     }
 }
 
-fn recommend_help() -> String {
+pub fn recommend_help() -> String {
     format!("Call \"project_booking help\" for additional information.")
 }
 
-fn license() -> String {
+pub fn license() -> String {
     format!("
 The complete source code is stored at: https://github.com/VBota1/project_booking
 
