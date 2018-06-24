@@ -2,3 +2,15 @@ before_script: cd project_booking_cli
 language: rust
 rust:
   - stable
+jobs:
+  include:
+    - stage: test
+      script: cd project_booking_backend
+      script: cargo test
+      script: cd todo
+      script: cargo test      
+      script: cd ..
+      script: cd ..
+    - stage: build
+      script: cd project_booking_cli
+      script: cargo build release
