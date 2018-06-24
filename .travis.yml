@@ -7,7 +7,7 @@ jobs:
     - stage: test
       script: 
         - cd project_booking_backend && cargo test
-        - cd project_booking_backend/todo && cargo test
+        - cd todo && cargo test
     - stage: build
       script: cd project_booking_cli && cargo build --release      
  
