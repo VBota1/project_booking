@@ -9,8 +9,8 @@ jobs:
       script: cargo test
       script: cd todo
       script: cargo test      
-      script: cd ..
-      script: cd ..
+      script: cd ../
+      script: cd ../
     - stage: build
       script: cd project_booking_cli
-      script: cargo build release
+      script: cargo build --release
