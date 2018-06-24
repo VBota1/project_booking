@@ -4,7 +4,6 @@ use std::time::Duration;
 use std::thread::sleep;
 use formaters::AsHHMMSS;
 
-//TODO update these tests
 #[test]
 fn test_handle_command_as_service() {
     let to_do: ToDo = ToDo::new();
