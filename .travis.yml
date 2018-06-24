@@ -4,5 +4,5 @@ rust:
 jobs:
   include:
     - stage: test
-      script: cd project_booking_backend
-      script: cargo test --verbose
+      script: cd project_booking_backend && cargo test --verbose
+ 
