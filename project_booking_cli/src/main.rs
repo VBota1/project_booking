@@ -277,7 +277,7 @@ fn activity_report() {
     let args_vec = vec![month_argument];
     let args = args_vec.iter();
     let actual_report = daily_activity_report(args, &to_do).as_string();
-    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"id\":\"1\",\"name\":\"{}\",\"time_spent\":\"02:02:00\",\"labels\":[\"{}\",\"{}\"],\"clock_in_timestamp\":\"None\"}}]}}]", date_argument, task_name_510, label_1, label_2);
+    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"task\":\"{}\",\"time\":\"01:01:00\"}}]}}]", date_argument, task_name_510);
     assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
 }
 
