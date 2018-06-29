@@ -19,12 +19,18 @@ extern crate serde_json;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DayReport {
     date: String,
-    tasks: Vec<TaskReport>,
+    tasks: Vec<TaskTimePair>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TaskTimePair {
+	task: String,
+	time: String,
 }
 
 pub trait ToDoReportMothJurnal {
     fn to_month_jurnal_report(&self, month_to_report: u32) -> Vec<DayReport>;
-    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskReport>>;
+    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskTimePair>>;
 }
 
 impl ToDoReportMothJurnal for ToDo {
@@ -41,15 +47,15 @@ impl ToDoReportMothJurnal for ToDo {
         report
     }
 
-    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskReport>> {
-        let mut task_durations_on_day: HashMap<String, Vec<TaskReport>> = HashMap::new();
+    fn to_daily_activity_report(&self) -> HashMap<String, Vec<TaskTimePair>> {
+        let mut task_durations_on_day: HashMap<String, Vec<TaskTimePair>> = HashMap::new();
 
         let tasklist = self.list.as_slice();
         for t in tasklist {
             let time_records = t.time_spent();
-            for (date, _) in time_records {
+            for (date, time_spent) in time_records {
                 let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
-                task_info.push(t.complete_report());
+                task_info.push( TaskTimePair{ task: t.name(), time: time_spent.as_hhmmss() });
             }
         }
 
@@ -57,9 +63,9 @@ impl ToDoReportMothJurnal for ToDo {
     }
 }
 
-impl std::clone::Clone for TaskReport {
-    fn clone(&self) -> TaskReport {
-        TaskReport { id: self.id.to_string(), name: self.name.to_string(), time_spent: self.time_spent.to_string(), labels: self.labels.clone(), clock_in_timestamp: self.clock_in_timestamp.to_string() }
+impl std::clone::Clone for TaskTimePair {
+    fn clone(&self) -> TaskTimePair {
+        TaskTimePair { task: self.task.to_string(), time: self.time.to_string() }
     }
 }
 
