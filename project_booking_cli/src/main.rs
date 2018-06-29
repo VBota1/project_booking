@@ -177,6 +177,7 @@ impl FormatJsonForDisplay for String {
             .replace(",clock", "\tclock")
             .replace(",label", "label")
             .replace(",date", "date")
+            .replace(",task", "task")
             .trim()
             .to_string()
     }
@@ -277,7 +278,7 @@ fn activity_report() {
     let args_vec = vec![month_argument];
     let args = args_vec.iter();
     let actual_report = daily_activity_report(args, &to_do).as_string();
-    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"task\":\"{}\",\"time\":\"01:01:00\"}}]}}]", date_argument, task_name_510);
+    let expected_report = format!("[{{\"date\":\"{}\",\"tasks\":[{{\"task\":\"{}\",\"time_spent\":\"01:01:00\"}}]}}]", date_argument, task_name_510);
     assert!(actual_report == expected_report, "Actual report {} Expected report {}", actual_report, expected_report);
 }
 

@@ -25,7 +25,7 @@ pub struct DayReport {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TaskTimePair {
 	task: String,
-	time: String,
+	time_spent: String,
 }
 
 pub trait ToDoReportMothJurnal {
@@ -53,9 +53,9 @@ impl ToDoReportMothJurnal for ToDo {
         let tasklist = self.list.as_slice();
         for t in tasklist {
             let time_records = t.time_spent();
-            for (date, time_spent) in time_records {
+            for (date, duration) in time_records {
                 let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
-                task_info.push( TaskTimePair{ task: t.name(), time: time_spent.as_hhmmss() });
+                task_info.push( TaskTimePair{ task: t.name(), time_spent: duration.as_hhmmss() });
             }
         }
 
@@ -65,14 +65,14 @@ impl ToDoReportMothJurnal for ToDo {
 
 impl std::clone::Clone for TaskTimePair {
     fn clone(&self) -> TaskTimePair {
-        TaskTimePair { task: self.task.to_string(), time: self.time.to_string() }
+        TaskTimePair { task: self.task.to_string(), time_spent: self.time_spent.to_string() }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LabelReport {
     pub label: String,
-    pub time: String,
+    pub time_spent: String,
 }
 
 pub trait ToDoReportTimeOnLabels {
@@ -94,7 +94,7 @@ impl ToDoReportTimeOnLabels for ToDo {
             }
         }
 
-        time_on_labels.iter().map(|(label_name, duration)| LabelReport { label: label_name.to_string(), time: duration.as_hhmmss() }).collect()
+        time_on_labels.iter().map(|(label_name, duration)| LabelReport { label: label_name.to_string(), time_spent: duration.as_hhmmss() }).collect()
     }
 }
 

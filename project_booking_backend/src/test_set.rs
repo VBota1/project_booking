@@ -213,15 +213,15 @@ fn report_time_by_label() {
     for line in actual_report {
         if label1 == line.label {
             let expected = Duration::new(9, 0).as_hhmmss();
-            assert!(line.time == expected, "Label {} Actual {} Expected {}", label1, line.time, expected);
+            assert!(line.time_spent == expected, "Label {} Actual {} Expected {}", label1, line.time_spent, expected);
         } else {
             if label2 == line.label {
                 let expected = Duration::new(9, 0).as_hhmmss();
-                assert!(line.time == expected, "Label {} Actual {} Expected {}", label2, line.time, expected);
+                assert!(line.time_spent == expected, "Label {} Actual {} Expected {}", label2, line.time_spent, expected);
             } else {
                 if label3 == line.label {
                     let expected = Duration::new(6, 0).as_hhmmss();
-                    assert!(line.time == expected, "Label {} Actual {} Expected {}", label3, line.time, expected);
+                    assert!(line.time_spent == expected, "Label {} Actual {} Expected {}", label3, line.time_spent, expected);
                 } else {
                     assert!(false, "Unexpected label \"{}\" was reported", line.label);
                 }
