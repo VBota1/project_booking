@@ -17,3 +17,6 @@ Cargo.lock
 
 # Intellij project config
 .iml
+*.sln
+*.rsproj
+*.user
