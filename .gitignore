@@ -20,3 +20,9 @@ Cargo.lock
 *.sln
 *.rsproj
 *.user
+
+target/
+project_booking_gui/
+[B]build/
+[R]release/
+[D]debug/
