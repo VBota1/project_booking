@@ -26,6 +26,7 @@ pub struct DayReport {
 pub struct TaskTimePair {
 	task: String,
 	time_spent: String,
+    labels: Vec<String>,
 }
 
 pub trait ToDoReportMothJurnal {
@@ -55,7 +56,7 @@ impl ToDoReportMothJurnal for ToDo {
             let time_records = t.time_spent();
             for (date, duration) in time_records {
                 let task_info = task_durations_on_day.entry(date).or_insert(Vec::new());
-                task_info.push( TaskTimePair{ task: t.name(), time_spent: duration.as_hhmmss() });
+                task_info.push(TaskTimePair { task: t.name(), time_spent: duration.as_hhmmss(), labels: t.labels() });
             }
         }
 
@@ -65,7 +66,7 @@ impl ToDoReportMothJurnal for ToDo {
 
 impl std::clone::Clone for TaskTimePair {
     fn clone(&self) -> TaskTimePair {
-        TaskTimePair { task: self.task.to_string(), time_spent: self.time_spent.to_string() }
+        TaskTimePair { task: self.task.to_string(), time_spent: self.time_spent.to_string(), labels: self.labels.clone() }
     }
 }
 
