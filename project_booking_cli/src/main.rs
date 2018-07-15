@@ -15,6 +15,11 @@ extern crate todo;
 
 use todo::*;
 
+pub struct Response {
+    pub message: String,
+    pub should_save: bool,
+}
+
 fn main() {
     match initiate_logging(None) {
         Ok(message) => { trace(message); }

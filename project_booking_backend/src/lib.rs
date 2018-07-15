@@ -33,11 +33,6 @@ pub const LICENSE: &'static str = "license";
 pub const APPLICATIONMODE: &'static str = "applicationMode";
 pub const EXIT: &'static str = "exit";
 
-pub struct Response {
-    pub message: String,
-    pub should_save: bool,
-}
-
 pub fn help() -> String {
     format!("Version 016012000
 Service mode usage: ./project_booking_cli command [task][labels][time]
