@@ -11,6 +11,7 @@ jobs:
       script: 
         - cd project_booking_backend && RUST_TEST_THREADS=1 cargo test
         - cd todo && RUST_TEST_THREADS=1 cargo test
+        - cd project_booking_cli && RUST_TEST_THREADS=1 cargo test
     - stage: test cli
       script: cd project_booking_cli && RUST_TEST_THREADS=1 cargo test
     - stage: build
