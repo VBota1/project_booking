@@ -1,11 +1,10 @@
 [package]
-name = "project_booking_cli"
-version = "0.1.7"
+name = "project_booking_backend_gui_interface"
+version = "0.1.0"
 authors = ["Viorel Bota <botaviorel@gmail.com>"]
 
 [dependencies]
 project_booking_backend = { path = "../project_booking_backend" }
-todo = { path = "../project_booking_backend/todo" }
 logger = { path = "../project_booking_backend/logger" }
+todo = { path = "../project_booking_backend/todo" }
 formaters = { path = "../project_booking_backend/formaters" }
-chrono = "0.4"

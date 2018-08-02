@@ -9,24 +9,25 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 020017000**
+**Version: 021017000**
 
 **Implemented:**
 ```
-    Event Logging
-    Loading/Saving ToDo from/to a file
     Adding a new Task
+    Remove Task
     Clock In a Task
     Clock Out of a Task
-    CLI interface
-    Report by Task
-    Report by Label
-    Daily activity report
     Add Time to Task
-    Remove Task
+    Report by Task / Standard Report
+    Daily activity report
+    Report by Label / Project    
     Help
     License
     Application Mode
+        
+    Event Logging
+    Loading/Saving ToDo from/to a file
+    CLI interface
 ```
 
 **Usage Examples**
@@ -53,6 +54,8 @@ A Task is defeind by:
   
 **To be Done:**
 ```
+    Add time should report new time for updated date
+    Remove time
     implment Gui (options: QT or https://github.com/SergioBenitez/Rocket or https://github.com/Boscop/web-view or)
     import tasks from Jira
 ``` 

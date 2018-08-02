@@ -9,8 +9,7 @@ use logger::*;
 use formaters::dmy_format;
 use std::slice::Iter;
 use std::time::Duration;
-use formaters::AsHHMMSS;
-use chrono::NaiveDate;
+use chrono::{NaiveDate, Datelike, Local};
 use report::*;
 
 extern crate serde;
@@ -232,8 +231,7 @@ pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, Stri
     };
 
     let secs = (hours * 3600 + minutes * 60) as u64;
-    let new_time = to_do.add_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))?;
-    Ok(trace(format!("Time spent on task \"{}\" is now \"{}\"", task_name, new_time.as_hhmmss())))
+    to_do.add_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))
 }
 
 pub fn store(to_do: ToDo) -> Result<String, String> {

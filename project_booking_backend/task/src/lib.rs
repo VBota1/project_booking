@@ -70,7 +70,7 @@ impl Task {
         self._time_spent.clone()
     }
 
-    pub fn add_time_spent(&mut self, date_to_add_time: Option<NaiveDate>, time: Duration) -> Duration {
+    pub fn add_time_spent(&mut self, date_to_add_time: Option<NaiveDate>, time: Duration) -> String {
         let date_for_duration = match date_to_add_time {
             Some(date) => date,
             None => {
@@ -80,7 +80,7 @@ impl Task {
         };
         let value = self._time_spent.entry(date_for_duration.as_dmy()).or_insert(Duration::new(0, 0));
         *value += time;
-        value.clone()
+        format!("Time spent for task \"{}\" on date \"{}\" is now \"{}\"", self._name.clone(), date_for_duration.as_dmy(), value.clone().as_hhmmss())
     }
 
     pub fn clock_in_timestamp(&self) -> Option<SystemTime> {

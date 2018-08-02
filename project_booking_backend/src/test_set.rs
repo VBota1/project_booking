@@ -2,7 +2,7 @@ use super::ToDo;
 use super::*;
 use std::time::Duration;
 use std::thread::sleep;
-use formaters::AsHHMMSS;
+use formaters::{AsHHMMSS, AsDMY};
 
 #[test]
 fn control_1_task_as_service() {
@@ -106,12 +106,15 @@ fn check_add_time() {
     let args = args_vec.iter();
     create_new_task_from_arguments(args, &mut to_do);
 
+    let date_time = Local::now().naive_local();
+    let current_date = NaiveDate::from_ymd(date_time.year(), date_time.month(), date_time.day()).as_dmy();
+
     let time_argument = format!("01:01");
     let args_vec = vec![task_name.clone(), time_argument];
     let args = args_vec.iter();
     match add_time(args, &mut to_do) {
         Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name.clone());
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"01:01:00\"", task_name.clone(), current_date);
             assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
         },
         Err(response) => {

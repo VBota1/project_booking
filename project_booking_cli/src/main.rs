@@ -1,19 +1,19 @@
 extern crate project_booking_backend;
 extern crate logger;
 extern crate formaters;
+extern crate chrono;
+extern crate todo;
 
 use logger::*;
 use std::io;
 use std::io::Write;
 use project_booking_backend::*;
 use std::slice::Iter;
-use formaters::{AsString, AsHHMMSS};
+use formaters::{AsString, AsHHMMSS, AsDMY};
 use std::time::Duration;
 use std::thread::sleep;
-
-extern crate todo;
-
 use todo::*;
+use chrono::{NaiveDate, Datelike, Local};
 
 pub struct Response {
     pub message: String,
@@ -234,12 +234,15 @@ fn activity_report() {
     let args = args_vec.iter();
     create_new_task_from_arguments(args, &mut to_do);
 
+    let date_time = Local::now().naive_local();
+    let current_date = NaiveDate::from_ymd(date_time.year(), date_time.month(), date_time.day()).as_dmy();
+
     let time_argument = format!("01:01");
     let args_vec = vec![task_name_510.clone(), time_argument];
     let args = args_vec.iter();
     match add_time(args, &mut to_do) {
         Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name_510.clone());
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"01:01:00\"", task_name_510.clone(), current_date);
             assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
         },
         Err(response) => {
@@ -253,7 +256,7 @@ fn activity_report() {
     let args = args_vec.iter();
     match add_time(args, &mut to_do) {
         Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"01:01:00\"", task_name_510.clone());
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"01:01:00\"", task_name_510.clone(), date_argument);
             assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
         },
         Err(response) => {
@@ -271,7 +274,7 @@ fn activity_report() {
     let args = args_vec.iter();
     match add_time(args, &mut to_do) {
         Ok(response) => {
-            let expected_response = format!("Time spent on task \"{}\" is now \"00:01:00\"", task_name_500.clone());
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"00:01:00\"", task_name_500.clone(), current_date);
             assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
         },
         Err(response) => {
