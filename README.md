@@ -18,6 +18,7 @@ A Task is defeind by:
     Clock In a Task
     Clock Out of a Task
     Add Time to Task
+    Remove Time from Task
     Report by Task / Standard Report
     Daily activity report
     Report by Label / Project    
@@ -40,6 +41,8 @@ A Task is defeind by:
     ./project_booking_cli reportForMonth 5
     ./project_booking_cli addTime task510 01:01
     ./project_booking_cli addTime task510 01:01 31.05.2021
+    ./project_booking_cli removeTime task510 01:01
+    ./project_booking_cli removeTime task510 01:01 31.05.2021    
     ./project_booking_cli delete task510
     ./project_booking_cli help
     ./project_booking_cli license
@@ -49,12 +52,10 @@ A Task is defeind by:
 **Known issues:**
 ```
     timesamp for log messages is invalid
-    days reported with command reportForMonth are not sorted 
 ```
   
 **To be Done:**
 ```
-    Add time should report new time for updated date
     implment Gui (options: QT or https://github.com/SergioBenitez/Rocket or https://github.com/Boscop/web-view or)
     import tasks from Jira
 ``` 
