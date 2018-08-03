@@ -140,6 +140,10 @@ fn handle_command_as_application(mut args: Iter<String>, to_do: &mut ToDo) -> Re
                     trace(format!("Add time request detected"));
                     Response { message: add_time(args, to_do).as_string(), should_save: true }
                 }
+                REMOVETIME => {
+                    trace(format!("Remove time request detected"));
+                    Response { message: remove_time(args, to_do).as_string(), should_save: true }
+                }
                 DELETE => {
                     trace(format!("Delete request detected"));
                     Response { message: delete(args, to_do).as_string(), should_save: true }

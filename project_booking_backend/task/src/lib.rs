@@ -83,6 +83,27 @@ impl Task {
         format!("Time spent for task \"{}\" on date \"{}\" is now \"{}\"", self._name.clone(), date_for_duration.as_dmy(), value.clone().as_hhmmss())
     }
 
+    pub fn remove_time_spent(&mut self, date_to_remove_time: Option<NaiveDate>, time: Duration) -> String {
+        let date_for_duration = match date_to_remove_time {
+            Some(date) => date,
+            None => {
+                let date_time = Local::now().naive_local();
+                NaiveDate::from_ymd(date_time.year(), date_time.month(), date_time.day())
+            }
+        };
+
+        let new_value = match self._time_spent.get_mut(&date_for_duration.as_dmy()) {
+            Some(value) => {
+                if *value > time { *value -= time; } else { *value = Duration::new(0, 0); }
+                value.clone()
+            },
+            None => {
+                Duration::new(0, 0)
+            }
+        };
+        format!("Time spent for task \"{}\" on date \"{}\" is now \"{}\"", self._name.clone(), date_for_duration.as_dmy(), new_value.as_hhmmss())
+    }
+
     pub fn clock_in_timestamp(&self) -> Option<SystemTime> {
         match self._clock_in_timestamp {
             Some(time) => { Some(time.clone()) },

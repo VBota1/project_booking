@@ -9,7 +9,7 @@ A Task is defeind by:
     Labels (to help group tasks by various criteria)
 ```  
 
-**Version: 021017000**
+**Version: 022018000**
 
 **Implemented:**
 ```
@@ -55,7 +55,6 @@ A Task is defeind by:
 **To be Done:**
 ```
     Add time should report new time for updated date
-    Remove time
     implment Gui (options: QT or https://github.com/SergioBenitez/Rocket or https://github.com/Boscop/web-view or)
     import tasks from Jira
 ``` 

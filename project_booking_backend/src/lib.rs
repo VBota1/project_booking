@@ -26,6 +26,7 @@ pub const REPORT: &'static str = "report";
 pub const REPORTBYLABEL: &'static str = "reportByLabel";
 pub const REPORTFORMONTH: &'static str = "reportForMonth";
 pub const ADDTIME: &'static str = "addTime";
+pub const REMOVETIME: &'static str = "removeTime";
 pub const DELETE: &'static str = "delete";
 pub const HELP: &'static str = "help";
 pub const LICENSE: &'static str = "license";
@@ -33,7 +34,7 @@ pub const APPLICATIONMODE: &'static str = "applicationMode";
 pub const EXIT: &'static str = "exit";
 
 pub fn help() -> String {
-    format!("Version 016012000
+    format!("Version 022018000
 Service mode usage: ./project_booking_cli command [task][labels][time]
 Application mode usage: command [task][labels][time]
   Supported commands:
@@ -44,6 +45,7 @@ Application mode usage: command [task][labels][time]
 \t{4: <18} Prints out a report of all the duration spend on each label.
 \t{11: <18} Prints out a report of the time spent on each task of each day of the specified month. Must be followed by a month argument: example 05 for May.
 \t{5: <18} Add the specified time to the specified task. Must be followed by a task name. Must be followed by the time to add in the format hh:mm . Can be followed by the date for which to add the time. The date must be in the format dd.mm.yyyy .
+\t{12: <18} Remove the specified time of the specified task. Must be followed by a task name. Must be followed by the time to remove in the format hh:mm . Can be followed by the date for which to remove the time. The date must be in the format dd.mm.yyyy .
 \t{6: <18} Removes the specified task from the recordings. Must be followed by a task name.
 \t{7: <18} Prints out this help text.
 \t{8: <18} Prints out License information.
@@ -58,12 +60,14 @@ Application mode usage: command [task][labels][time]
 \t./project_booking_cli {11} 5
 \t./project_booking_cli {5} task510 01:01
 \t./project_booking_cli {5} task510 01:01 31.05.2021
+\t./project_booking_cli {12} task510 01:01
+\t./project_booking_cli {12} task510 01:01 31.05.2021
 \t./project_booking_cli {6} task510
 \t./project_booking_cli {7}
 \t./project_booking_cli {8}
 \t./project_booking_cli {9}
 \t{10}
-    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTFORMONTH)
+    ", NEW, CLOCKIN, CLOCKOUT, REPORT, REPORTBYLABEL, ADDTIME, DELETE, HELP, LICENSE, APPLICATIONMODE, EXIT, REPORTFORMONTH, REMOVETIME)
 }
 
 pub fn delete(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
@@ -184,7 +188,17 @@ pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, Stri
         },
     };
 
-    let (hours, minutes) = match args.nth(0) {
+    let (hours, minutes) = parse_as_time(args.nth(0))?;
+
+    let date: Option<NaiveDate> = parse_as_date(args.nth(0))?;
+
+    let secs = (hours * 3600 + minutes * 60) as u64;
+
+    to_do.add_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))
+}
+
+fn parse_as_time(to_be_parsed: Option<&String>) -> Result<(u32, u32), String> {
+    match to_be_parsed {
         Some(time_argument) => {
             let time: Vec<String> = time_argument.split(':').map(|s| format!("{}", s)).collect();
             let error_message = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
@@ -208,17 +222,19 @@ pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, Stri
                 Err(_) => { return Err(warn(error_message)); }
             };
 
-            (h, min)
+            Ok((h, min))
         },
         None => {
             return Err(warn(format!("No time to be added to the task was received. \"{}\"", recommend_help())));
         }
-    };
+    }
+}
 
-    let date: Option<NaiveDate> = match args.nth(0) {
+fn parse_as_date(to_be_parsed: Option<&String>) -> Result<Option<NaiveDate>, String> {
+    match to_be_parsed {
         Some(date_argument) => {
             match NaiveDate::parse_from_str(date_argument, dmy_format().as_str()) {
-                Ok(result) => { Some(result) },
+                Ok(result) => { Ok(Some(result)) },
                 Err(_) => {
                     return Err(warn(format!("Date for which to add time, \"{}\" ,is not in the expected format. \"{}\"", date_argument, recommend_help())));
                 }
@@ -226,12 +242,28 @@ pub fn add_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, Stri
         }
         None => {
             warn(format!("No date for which to add time was received. Current date will be used"));
-            None
+            Ok(None)
         }
+    }
+}
+
+pub fn remove_time(mut args: Iter<String>, to_do: &mut ToDo) -> Result<String, String> {
+    if 0 == to_do.count() { return Err(warn(no_tasks_recorderd_message())); }
+
+    let task_name = match args.nth(0) {
+        Some(task) => { task },
+        None => {
+            return Err(warn(format!("No task name received. \"{}\"", recommend_help())));
+        },
     };
 
+    let (hours, minutes) = parse_as_time(args.nth(0))?;
+
+    let date: Option<NaiveDate> = parse_as_date(args.nth(0))?;
+
     let secs = (hours * 3600 + minutes * 60) as u64;
-    to_do.add_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))
+
+    to_do.remove_time_spent_to_task(task_name.clone(), date, Duration::new(secs, 0))
 }
 
 pub fn store(to_do: ToDo) -> Result<String, String> {

@@ -163,6 +163,91 @@ fn check_add_time() {
 }
 
 #[test]
+fn check_remove_time() {
+    let mut to_do: ToDo = ToDo::new();
+
+    let task_name = format!("task510");
+    let label_1 = format!("label_1");
+    let label_2 = format!("label_2");
+    let args_vec = vec![task_name.clone(), label_1.clone(), label_2.clone()];
+    let args = args_vec.iter();
+    create_new_task_from_arguments(args, &mut to_do);
+
+    let date_time = Local::now().naive_local();
+    let current_date = NaiveDate::from_ymd(date_time.year(), date_time.month(), date_time.day()).as_dmy();
+
+    let time_argument = format!("01:05");
+    let args_vec = vec![task_name.clone(), time_argument];
+    let args = args_vec.iter();
+    add_time(args, &mut to_do);
+
+    let time_argument = format!("00:05");
+    let args_vec = vec![task_name.clone(), time_argument];
+    let args = args_vec.iter();
+    match remove_time(args, &mut to_do) {
+        Ok(response) => {
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"01:00:00\"", task_name.clone(), current_date);
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+        Err(response) => {
+            assert!(false, response);
+        }
+    };
+
+    let time_argument = format!("01:05");
+    let args_vec = vec![task_name.clone(), time_argument];
+    let args = args_vec.iter();
+    match remove_time(args, &mut to_do) {
+        Ok(response) => {
+            let expected_response = format!("Time spent for task \"{}\" on date \"{}\" is now \"00:00:00\"", task_name.clone(), current_date);
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+        Err(response) => {
+            assert!(false, response);
+        }
+    };
+
+    let time_argument = format!("0101");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match remove_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        }
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+    };
+
+    let time_argument = format!("0a:01");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match remove_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        }
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+    };
+
+    let time_argument = format!("01:o1");
+    let args_vec = vec![task_name.clone(), time_argument.clone()];
+    let args = args_vec.iter();
+    match remove_time(args, &mut to_do) {
+        Ok(response) => {
+            assert!(false, "Expected Err Actual {}", response);
+        }
+        Err(response) => {
+            let expected_response = format!("Time to be added to the task, \"{}\" ,is not in the expected format. \"{}\"", time_argument, recommend_help());
+            assert!(response == expected_response, "Expected {} Actual {}", expected_response, response);
+        }
+    };
+}
+
+#[test]
 fn delete_task() {
     let mut todo = ToDo::new();
     let task_name = format!("task1");

@@ -82,6 +82,10 @@ fn handle_command(mut args: Iter<String>, to_do: &mut ToDo) -> Response {
                     trace(format!("Add time request detected"));
                     Response { message: add_time(args, to_do), should_save: true }
                 }
+                REMOVETIME => {
+                    trace(format!("Remove time request detected"));
+                    Response { message: remove_time(args, to_do), should_save: true }
+                }
                 DELETE => {
                     trace(format!("Delete request detected"));
                     Response { message: delete(args, to_do), should_save: true }

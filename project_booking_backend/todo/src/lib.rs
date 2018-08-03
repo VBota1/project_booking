@@ -87,6 +87,11 @@ impl ToDo {
         Ok(self.list.get_mut(index).unwrap().add_time_spent(date_to_add_time, time))
     }
 
+    pub fn remove_time_spent_to_task(&mut self, task_name: String, date_to_remove_time: Option<NaiveDate>, time: Duration) -> Result<String, String> {
+        let index = self.list.index_of_task_by_name(task_name)?;
+        Ok(self.list.get_mut(index).unwrap().remove_time_spent(date_to_remove_time, time))
+    }
+
     pub fn remove_task(&mut self, task_name: String) -> Result<String, String> {
         let index = self.list.index_of_task_by_name(task_name.clone())?;
         self.list.remove(index);
